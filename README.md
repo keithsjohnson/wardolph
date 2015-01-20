@@ -1,2 +1,2 @@
 # wardolph
-Sentiment Analysis..
+Sentiment Analysis.
