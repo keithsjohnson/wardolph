@@ -1,0 +1,4 @@
+body { padding-top: 60px; }
+#map-canvas { height: 600px; margin: 0; padding: 0;}
+#map-canvas img{ max-width: none; }
+.header-icon {width:80px; height:80px; float:left;}
