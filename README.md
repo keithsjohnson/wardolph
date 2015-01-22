@@ -1,6 +1,7 @@
 # wardolph
 Sentiment Analysis
 
+#Setup
 Install node modules with command below:
 npm install async express sentiment socket.io twit
 
