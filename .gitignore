@@ -53,3 +53,5 @@ npm-debug.log
 
 #c9
 .c9
+
+server/conf.js
