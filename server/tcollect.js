@@ -1,5 +1,5 @@
 (function() {
-    console.info('tcollect started');
+    console.log('tcollect started');
     var twit = require('twit');
     var sentiment = require('sentiment');
     var config = require('./conf');
@@ -21,7 +21,7 @@
     // Connect to the db //strat mango db before trying to connect.
     mongoClient.connect("mongodb://"+process.env.IP+":27017/feminism", function(err, db) {
       if(!err) {
-        console.log("We are connected");
+        console.log("mongodb: We are connected");
         var collection = db.collection('tcollect');
         
         //collection.drop();
@@ -63,6 +63,9 @@
         
         
         
+      }
+      else{
+          console.err("mongodb error connecting: "+err);
       }
     });
     
