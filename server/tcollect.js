@@ -50,7 +50,7 @@
         }
         
         
-        setInterval(saveClearData, 60000);//saving every min
+        setInterval(saveClearData, 300000);//saving every min
         
         
         //var testPrint = function(){

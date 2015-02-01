@@ -1,4 +1,5 @@
 var mongo = require('mongodb');
+var config = require('./conf');
 
 var mongoClient = mongo.MongoClient;
     
@@ -20,7 +21,9 @@ mongoClient.connect("mongodb://"+config.ip+":27017/feminism", function(err, db) 
             collection.find().toArray(function(err, items) {console.log(items);});
  
         };
-        setInterval(testPrint, 5000);//clearing every 5 min
+        
+        testPrint();
+        //setInterval(testPrint, 5000);//clearing every 5 min
         
         
         
