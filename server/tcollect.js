@@ -65,7 +65,7 @@
         
       }
       else{
-          console.err("mongodb error connecting: "+err);
+          console.log("mongodb error connecting: "+err);
       }
     });
     
