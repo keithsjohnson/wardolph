@@ -48,7 +48,7 @@
         }
         
         
-        setInterval(saveClearData, 600000);//saving every 10 min
+        setInterval(saveClearData, 300000);//saving every 5 min.. if you do it more the data will exceed size limit set by mondo db
         
         /*
         var testPrint = function(){
