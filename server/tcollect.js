@@ -9,7 +9,6 @@
     
     var uniqueData = {};
     
-    //console.log("jzTest config key: "+config.twitter.consumer_key);
     var tSearch = new twit({
         consumer_key:         config.twitter.consumer_key
       , consumer_secret:      config.twitter.consumer_secret
@@ -17,31 +16,30 @@
       , access_token_secret:  config.twitter.access_token_secret
     });
     
+    var TDataObj = function (date,type,sentiment,tweet){
+                        this.date = date;
+                        this.type = type;
+                        this.sentiment = sentiment;
+                        this.tweet = tweet;
+                    };
+    
     
     // Connect to the db //strat mango db before trying to connect.
-    mongoClient.connect("mongodb://"+config.ip+":27017/feminism", function(err, db) {
+    mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
       if(!err) {
         console.log("mongodb: We are connected");
-        var collection = db.collection('tcollect');
+        var collection = db.collection('feminism');
         
         //collection.drop();
         var saveClearData = function (){
-            var now = new Date();
-            var jsonDate = now.toJSON();
-            var storeData = {jsonDate: jsonDate, uniqueData: uniqueData};
-            collection.insert(storeData, {w:1}, function(err, result) {
+
+            
+            collection.insert(uniqueData, {w:1}, function(err, result) {
                 if(err)
                     console.log("data saved err: "+err);
-            
-                
             });
             
-            
-                 //   for (var m in uniqueData) {
-                 //       console.log(m);
-                 //   }
-            
-            //console.log("saving Data ");
+            console.log("saving Data ");
             uniqueData = {};
             
             //saving data
@@ -50,18 +48,18 @@
         }
         
         
-        setInterval(saveClearData, 300000);//saving every min
+        setInterval(saveClearData, 600000);//saving every 10 min
         
-        
-        //var testPrint = function(){
-          //  console.log('testprint');
+        /*
+        var testPrint = function(){
+            console.log('testprint');
             //collection.drop();
-            //collection.find().toArray(function(err, items) {console.log(items);});
+            collection.find().toArray(function(err, items) {console.log(items);});
  
-        //};
-        // setInterval(testPrint, 5000);//clearing every 5 min
+        };
+        setInterval(testPrint, 5000);//clearing every 5 min
         
-        
+        */
         
       }
       else{
@@ -89,7 +87,10 @@
                             var id = tweetData.statuses[i].id_str;
                             var snt = sentiment(textData);
                             //use googleplaces api to get location.. nodejs places module installed
-                            var tClientData = {name:'bulk_tweet', text:textData, sentiment:snt, tweet:tweetData.statuses[i]};
+                            //var tClientData = {name:'bulk_tweet', text:textData, sentiment:snt, tweet:tweetData.statuses[i]};
+                            var now = new Date();
+                            var jsonDate = now.toJSON();
+                            var tClientData = new TDataObj(jsonDate,'bulk_tweet',snt,tweetData.statuses[i]);
                             //do something with it
                             //collectedTData.push(tClientData);
                             uniqueData[id] = tClientData;
@@ -107,7 +108,12 @@
         var textData = newTweet.text;
         var id = newTweet.id_str;
         var snt = sentiment(textData);
-        var tClientData = {name:'streamed_tweet', text:textData, sentiment:snt, tweet:newTweet};
+        //var tClientData = {name:'streamed_tweet', text:textData, sentiment:snt, tweet:newTweet};
+        
+        var now = new Date();
+        var jsonDate = now.toJSON();
+        var tClientData = new TDataObj(jsonDate,'streamed_tweet',snt,newTweet);
+                            
         //do something with it
         //collectedTData.push(tClientData);
         uniqueData[id] = tClientData;

@@ -6,10 +6,10 @@ var mongoClient = mongo.MongoClient;
 
 
 // Connect to the db //strat mango db before trying to connect.
-mongoClient.connect("mongodb://"+config.ip+":27017/feminism", function(err, db) {
+mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
       if(!err) {
         console.log("mongodb: We are connected");
-        var collection = db.collection('tcollect');
+        var collection = db.collection('feminism');
         
         //collection.drop();
         
