@@ -35,7 +35,7 @@ mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) 
         collection.count(function(err, countRet) {
           count = countRet;
             console.log('total collections elements: '+count);
-          })
+          });
 
         
         var stream = collection.find().stream();
