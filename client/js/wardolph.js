@@ -15,13 +15,14 @@ function initSocket() {
 		tData = receivedData;
 		var lng = receivedData.coordinates.lng;
 		var lat = receivedData.coordinates.lat;
-		var comparative = receivedData.sentiment.comparative;
+		var averageSentiment = receivedData.averageSentiment;
 		/*var marker = new google.maps.Marker({
 			position: new google.maps.LatLng(lat,lng),
 			map: googleMap,
 			title:"count: "+receivedData.tweetCount
 		});*/
 		var circleDrawOptions = {
+		  averageSentiment: averageSentiment,
 	      strokeColor: '#AEBFC7',
 	      strokeOpacity: 0.8,
 	      strokeWeight: 1,
@@ -29,13 +30,19 @@ function initSocket() {
 	      fillOpacity: 0.35,
 	      map: googleMap,
 	      center: new google.maps.LatLng(lat,lng),
-	      radius: Math.sqrt(receivedData.tweetCount) * 5000
+	      radius: Math.sqrt(receivedData.tweetCount) * 5000//TODO look into it.
 	    };
-	    // Add the circle for this city to the map.
-	    var cityCircle = new google.maps.Circle(circleDrawOptions);
+	    // Add the circle to the map.
+	    var tCircle = new google.maps.Circle(circleDrawOptions);
+
+	    google.maps.event.addListener(tCircle,'mouseover',function(){
+             this.getMap().getDiv().setAttribute('title',averageSentiment);});
+
+        google.maps.event.addListener(tCircle,'mouseout',function(){
+             this.getMap().getDiv().removeAttribute('title');});
 
 		dataReceivedCount++;
-      //console.log("dataReceivedCount: "+dataReceivedCount);
+      //console.log("averageSentiment: "+receivedData.averageSentiment);
       $('#data-received strong').text(dataReceivedCount);
     });
 

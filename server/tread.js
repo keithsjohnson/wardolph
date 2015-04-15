@@ -23,10 +23,12 @@
         this.lat = lat
         this.lng = lng;
     }
+    
     var MiniTData = function (sentiment, lat, lng){
         this.sentiment = sentiment;
         this.coordinates = new Coordinates(lat,lng);
-        this.tweetCount = 0;
+        this.tweetCount = 1;
+        this.averageSentiment = 0;
     }
     
     var dataCoordinateMappedSentiment = {};
@@ -39,7 +41,7 @@
         mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
           if(!err) {
             console.log("tread: We are connected to mongo db");
-            var readyToDrawCollection = db.collection('feminism-readyToDraw');
+            var readyToDrawCollection = db.collection('feminism_readyToDraw');
             var timezoneCol = db.collection('timezone');
             var timezone = null;
             

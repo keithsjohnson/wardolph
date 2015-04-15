@@ -23,7 +23,8 @@ var config = require('../conf');
     var MiniTData = function (sentiment, lat, lng){
         this.sentiment = sentiment;
         this.coordinates = new Coordinates(lat,lng);
-        this.tweetCount = 0;
+        this.tweetCount = 1;
+        this.averageSentiment = 0;
     }
     
     var startReadingStream = function (){
@@ -88,10 +89,13 @@ var config = require('../conf');
                                     var latlng = lat+','+lng;
                                     
                                     if( typeof(dataCoordinateMappedSentiment[latlng])!='undefined'){
-                                        dataCoordinateMappedSentiment[latlng].tweetCount++;
+                                        var myData = dataCoordinateMappedSentiment[latlng];
+                                        myData.tweetCount++;
+                                        myData.averageSentiment = myData.averageSentiment + sentiment.score;
                                     }
                                     else{
                                         var myData = new MiniTData(sentiment, lat, lng);
+                                        myData.averageSentiment = sentiment.score;
                                         dataCoordinateMappedSentiment[latlng] = myData;
                                     }
                                     
@@ -130,7 +134,8 @@ var config = require('../conf');
                     var size = 0;
                     for (key in dataCoordinateMappedSentiment) {
                         var data = dataCoordinateMappedSentiment[key];
-                        console.log(JSON.stringify(data, null, 1));
+                        data.averageSentiment = data.averageSentiment / data.tweetCount;
+                        //console.log(JSON.stringify(data, null, 1));
                         //TODO save data here
                         readyToDraw.insert(data, { w: 1 }, function(err, result) { if(err)console.log("err: "+err);});
                         size++;
