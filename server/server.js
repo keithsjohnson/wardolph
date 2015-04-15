@@ -11,6 +11,7 @@ var socketio = require('socket.io');
 var express = require('express');
 var twit = require('twit');
 var tcollect = require('./tcollect');
+var tread = require('./tread');
 
 tcollect.getSomeThings();
 //
@@ -39,13 +40,17 @@ io.on('connection', function (socket) {
       socket.emit('message', test);
     });
     */
-    var collectedTData = tcollect.getTData();
+    var streamCallback = function(item){
+      socket.emit('syncTData',item);
+    };
+    var collectedTData = tread.setStreamCallback(streamCallback);
     
+    tread.startReadingStream();
     
-    socket.emit('syncTData',collectedTData);
+    //socket.emit('syncTData',collectedTData);
    
 
-    sockets.push(socket);
+    sockets.push(socket);//sockets is list of open connections with clients. Number of open connections equals number of clients.
 
     socket.on('disconnect', function () {
       sockets.splice(sockets.indexOf(socket), 1);

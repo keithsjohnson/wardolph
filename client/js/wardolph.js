@@ -1,7 +1,8 @@
 
 var tData;
 var geocoder;
-function init() {
+var googleMap;
+function initSocket() {
     
     var socket = io.connect();
 
@@ -9,20 +10,81 @@ function init() {
       console.log("connected to server");
     });
     
+    var dataReceivedCount = 0;
     socket.on('syncTData', function (receivedData) {
-      tData = receivedData;
-      console.log("collectedTData received: ",receivedData);
+		tData = receivedData;
+		var lng = receivedData.coordinates.lng;
+		var lat = receivedData.coordinates.lat;
+		var comparative = receivedData.sentiment.comparative;
+		/*var marker = new google.maps.Marker({
+			position: new google.maps.LatLng(lat,lng),
+			map: googleMap,
+			title:"count: "+receivedData.tweetCount
+		});*/
+		var circleDrawOptions = {
+	      strokeColor: '#AEBFC7',
+	      strokeOpacity: 0.8,
+	      strokeWeight: 1,
+	      fillColor: '#AEBFC7',
+	      fillOpacity: 0.35,
+	      map: googleMap,
+	      center: new google.maps.LatLng(lat,lng),
+	      radius: Math.sqrt(receivedData.tweetCount) * 5000
+	    };
+	    // Add the circle for this city to the map.
+	    var cityCircle = new google.maps.Circle(circleDrawOptions);
+
+		dataReceivedCount++;
+      //console.log("dataReceivedCount: "+dataReceivedCount);
+      $('#data-received strong').text(dataReceivedCount);
     });
 
-		geocoder = new google.maps.Geocoder();
+	/*	geocoder = new google.maps.Geocoder();
 		geocoder.geocode( { 'address': 'LA'}, function(results, status) {
 	    if (status == google.maps.GeocoderStatus.OK) {
 	    	console.log('geocoderaddress',results);
 	    }
 		});
+*/
+
+/*// Construct the circle for each value in citymap.
+  // Note: We scale the area of the circle based on the population.
+  var citymap = {};
+citymap['chicago'] = {
+  center: new google.maps.LatLng(41.878113, -87.629798),
+  population: 2714856
+};
+citymap['newyork'] = {
+  center: new google.maps.LatLng(40.714352, -74.005973),
+  population: 8405837
+};
+citymap['losangeles'] = {
+  center: new google.maps.LatLng(34.052234, -118.243684),
+  population: 3857799
+};
+citymap['vancouver'] = {
+  center: new google.maps.LatLng(49.25, -123.1),
+  population: 603502
+};
+var cityCircle;
+  for (var city in citymap) {
+    var populationOptions = {
+      strokeColor: '#AEBFC7',
+      strokeOpacity: 0.8,
+      strokeWeight: 1,
+      fillColor: '#AEBFC7',
+      fillOpacity: 0.35,
+      map: googleMap,
+      center: citymap[city].center,
+      radius: Math.sqrt(citymap[city].population) * 100
+    };
+    // Add the circle for this city to the map.
+    cityCircle = new google.maps.Circle(populationOptions);
+  }*/
+
 }
 
-init();
+
 //$(document).ready(init);
 	
 //google map stuff
@@ -141,44 +203,15 @@ function mapInit() {
     zoomControl: true,
 		styles: featureOpts
 	};
-	var map = new google.maps.Map(document.getElementById('map-canvas'),
+	googleMap = new google.maps.Map(document.getElementById('map-canvas'),
 		mapOptions);
 	
 	
 	
-	// Construct the circle for each value in citymap.
-  // Note: We scale the area of the circle based on the population.
-  var citymap = {};
-citymap['chicago'] = {
-  center: new google.maps.LatLng(41.878113, -87.629798),
-  population: 2714856
-};
-citymap['newyork'] = {
-  center: new google.maps.LatLng(40.714352, -74.005973),
-  population: 8405837
-};
-citymap['losangeles'] = {
-  center: new google.maps.LatLng(34.052234, -118.243684),
-  population: 3857799
-};
-citymap['vancouver'] = {
-  center: new google.maps.LatLng(49.25, -123.1),
-  population: 603502
-};
-var cityCircle;
-  for (var city in citymap) {
-    var populationOptions = {
-      strokeColor: '#AEBFC7',
-      strokeOpacity: 0.8,
-      strokeWeight: 1,
-      fillColor: '#AEBFC7',
-      fillOpacity: 0.35,
-      map: map,
-      center: citymap[city].center,
-      radius: Math.sqrt(citymap[city].population) * 100
-    };
-    // Add the circle for this city to the map.
-    cityCircle = new google.maps.Circle(populationOptions);
-  }
+	
+
+  google.maps.event.addListenerOnce( googleMap, 'idle', initSocket );
 }
 google.maps.event.addDomListener(window, 'load', mapInit);
+
+
