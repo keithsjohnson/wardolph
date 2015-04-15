@@ -36,7 +36,7 @@ function initSocket() {
 	    var tCircle = new google.maps.Circle(circleDrawOptions);
 
 	    google.maps.event.addListener(tCircle,'mouseover',function(){
-             this.getMap().getDiv().setAttribute('title',averageSentiment);});
+             this.getMap().getDiv().setAttribute('title', 'Sentiment: '+averageSentiment);});
 
         google.maps.event.addListener(tCircle,'mouseout',function(){
              this.getMap().getDiv().removeAttribute('title');});
