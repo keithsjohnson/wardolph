@@ -71,6 +71,20 @@ var config = require('../conf');
                 return timezoneFound;
             }
 
+            var storeInLatLongMap = function(lat, lng, sentiment){
+                var latlng = lat+','+lng;
+                if( typeof(dataCoordinateMappedSentiment[latlng])!='undefined'){
+                    var myData = dataCoordinateMappedSentiment[latlng];
+                    myData.tweetCount++;
+                    myData.averageSentiment = myData.averageSentiment + sentiment.score;
+                }
+                else{
+                    var myData = new MiniTData(lat, lng);
+                    myData.averageSentiment = sentiment.score;
+                    dataCoordinateMappedSentiment[latlng] = myData;
+                }
+            }
+
             var initStream = function(){
                 var stream = collection.find().stream();
 
@@ -86,36 +100,17 @@ var config = require('../conf');
                                 if( tweet.coordinates!=null && typeof(tweet.coordinates) != 'undefined'){
                                     var lat = tweet.coordinates.coordinates[1];
                                     var lng = tweet.coordinates.coordinates[0];
-                                    var latlng = lat+','+lng;
                                     
-                                    if( typeof(dataCoordinateMappedSentiment[latlng])!='undefined'){
-                                        var myData = dataCoordinateMappedSentiment[latlng];
-                                        myData.tweetCount++;
-                                        myData.averageSentiment = myData.averageSentiment + sentiment.score;
-                                    }
-                                    else{
-                                        var myData = new MiniTData(lat, lng);
-                                        myData.averageSentiment = sentiment.score;
-                                        dataCoordinateMappedSentiment[latlng] = myData;
-                                    }
+                                    storeInLatLongMap(lat,lng,sentiment);
                                     
-                                    //streamCallback(myData);
                                 }
                                 else{
                                     var timezoneFound = getTimeZone(tweet);
                                     if(timezoneFound!=null){
                                         var lat = timezoneFound.lat;
                                         var lng = timezoneFound.lng;
-                                        var latlng = lat+','+lng;
                                         
-                                        if( typeof(dataCoordinateMappedSentiment[latlng])!='undefined'){
-                                            dataCoordinateMappedSentiment[latlng].tweetCount++;
-                                        }
-                                        else{
-                                            var myData = new MiniTData(lat, lng);
-                                            dataCoordinateMappedSentiment[latlng] = myData;
-                                        }
-                                        //streamCallback(myData);
+                                        storeInLatLongMap(lat,lng,sentiment);
                                     }
                                 }
                             }
