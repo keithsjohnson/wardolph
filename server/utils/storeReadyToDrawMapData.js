@@ -82,7 +82,7 @@ var config = require('../conf');
                         if (key!='_id' && item.hasOwnProperty(key)) {
                             var sentiment = item[key].sentiment;
                             var tweet = item[key].tweet;
-                            if(tweet!=null && typeof(tweet)!='undefined'){
+                            if(tweet!=null && typeof(tweet)!='undefined' && sentiment.words.length>0){
                                 if( tweet.coordinates!=null && typeof(tweet.coordinates) != 'undefined'){
                                     var lat = tweet.coordinates.coordinates[1];
                                     var lng = tweet.coordinates.coordinates[0];
