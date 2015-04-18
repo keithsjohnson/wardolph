@@ -72,19 +72,15 @@
                 var firststream = true;
                 stream.on("data", function(item) {
 
-                    
-                        
-                        
-                            //var data = item[key];
-                            if(firststream){
-                                firststream = false;
-                                console.log(JSON.stringify(item, null, 0));
-                            }
+                    if(item.tweetCount > 20){
                             
                             var latlng = item.coordinates.lat+','+item.coordinates.lng;
+                            item.radius = Math.sqrt(item.tweetCount) * 5000;//TODO look into it.
                             dataCoordinateMappedSentiment[latlng] = item;
-                       
-                    
+                            //dataCoordinateMappedSentiment[latlng+'0'] = item;
+                            //dataCoordinateMappedSentiment[latlng+'00'] = item;
+                            //dataCoordinateMappedSentiment[latlng+'000'] = item;
+                    }
                     
                     
                     //currentStreamCount++;//only for debugging
@@ -133,7 +129,7 @@
 
     
     module.exports.getTData = function() {
-        return tweetsWithCoordinates[0];
+        return dataCoordinateMappedSentiment;
     }
 
     module.exports.setStreamCallback = function(callback) {

@@ -40,12 +40,13 @@ io.on('connection', function (socket) {
       socket.emit('message', test);
     });
     */
-    var streamCallback = function(item){
+    /*var streamCallback = function(item){
       socket.emit('syncTData',item);
     };
-    var collectedTData = tread.setStreamCallback(streamCallback);
-    
-    tread.startReadingStream();
+    var collectedTData = tread.setStreamCallback(streamCallback);*/
+    var tData = tread.getTData();
+    socket.emit('syncTData',tData);
+    //tread.startReadingStream();
     
     //socket.emit('syncTData',collectedTData);
    

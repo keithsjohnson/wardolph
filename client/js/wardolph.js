@@ -11,37 +11,25 @@ function initSocket() {
     });
     
     var dataReceivedCount = 0;
-    socket.on('syncTData', function (receivedData) {
-		tData = receivedData;
-		var lng = receivedData.coordinates.lng;
+    socket.on('syncTData', function (receivedData) {//TODO when server restarts and sends data again. reInit map and draw new points. or ignore it completely
+
+		console.log("data received");
+		for (key in receivedData) {
+            var data = receivedData[key];
+            drawDataPoint(data);
+            dataReceivedCount++;
+        }
+		/*var lng = receivedData.coordinates.lng;
 		var lat = receivedData.coordinates.lat;
-		var averageSentiment = receivedData.averageSentiment;
+		var averageSentiment = receivedData.averageSentiment;*/
 		/*var marker = new google.maps.Marker({
 			position: new google.maps.LatLng(lat,lng),
 			map: googleMap,
 			title:"count: "+receivedData.tweetCount
 		});*/
-		var circleDrawOptions = {
-		  averageSentiment: averageSentiment,
-	      strokeColor: '#AEBFC7',
-	      strokeOpacity: 0.8,
-	      strokeWeight: 1,
-	      fillColor: '#AEBFC7',
-	      fillOpacity: 0.35,
-	      map: googleMap,
-	      center: new google.maps.LatLng(lat,lng),
-	      radius: Math.sqrt(receivedData.tweetCount) * 5000//TODO look into it.
-	    };
-	    // Add the circle to the map.
-	    var tCircle = new google.maps.Circle(circleDrawOptions);
+		
 
-	    google.maps.event.addListener(tCircle,'mouseover',function(){
-             this.getMap().getDiv().setAttribute('title', 'Sentiment: '+averageSentiment);});
-
-        google.maps.event.addListener(tCircle,'mouseout',function(){
-             this.getMap().getDiv().removeAttribute('title');});
-
-		dataReceivedCount++;
+		/*dataReceivedCount++;*/
       //console.log("averageSentiment: "+receivedData.averageSentiment);
       $('#data-received strong').text(dataReceivedCount);
     });
@@ -54,41 +42,36 @@ function initSocket() {
 		});
 */
 
-/*// Construct the circle for each value in citymap.
-  // Note: We scale the area of the circle based on the population.
-  var citymap = {};
-citymap['chicago'] = {
-  center: new google.maps.LatLng(41.878113, -87.629798),
-  population: 2714856
-};
-citymap['newyork'] = {
-  center: new google.maps.LatLng(40.714352, -74.005973),
-  population: 8405837
-};
-citymap['losangeles'] = {
-  center: new google.maps.LatLng(34.052234, -118.243684),
-  population: 3857799
-};
-citymap['vancouver'] = {
-  center: new google.maps.LatLng(49.25, -123.1),
-  population: 603502
-};
-var cityCircle;
-  for (var city in citymap) {
-    var populationOptions = {
+
+
+}
+
+function drawDataPoint(tMiniData){
+	//var data = receivedData[key];
+    //console.log("jzTest1: ",tMiniData);
+    
+
+    var lng = tMiniData.coordinates.lng;
+	var lat = tMiniData.coordinates.lat;
+	var averageSentiment = tMiniData.averageSentiment;//round it up to 2 decimal Math.round(num * 100) / 100
+    var circleDrawOptions = {
       strokeColor: '#AEBFC7',
       strokeOpacity: 0.8,
       strokeWeight: 1,
       fillColor: '#AEBFC7',
       fillOpacity: 0.35,
       map: googleMap,
-      center: citymap[city].center,
-      radius: Math.sqrt(citymap[city].population) * 100
+      center: new google.maps.LatLng(lat,lng),
+      radius: tMiniData.radius
     };
-    // Add the circle for this city to the map.
-    cityCircle = new google.maps.Circle(populationOptions);
-  }*/
+    // Add the circle to the map.
+    var tCircle = new google.maps.Circle(circleDrawOptions);
 
+    google.maps.event.addListener(tCircle,'mouseover',function(){
+         this.getMap().getDiv().setAttribute('title', 'Count:'+tMiniData.tweetCount+'Sentiment:'+averageSentiment);});
+
+    google.maps.event.addListener(tCircle,'mouseout',function(){
+         this.getMap().getDiv().removeAttribute('title');});
 }
 
 
