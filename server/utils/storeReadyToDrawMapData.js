@@ -49,14 +49,15 @@ var config = require('../conf');
                 console.log('total collections elements: '+totalTweetCount);
             });
             var currentStreamCount = 0;
+            var printCompletionPercentageIntervalId = 0;
             var printCompletionPercentage = function(){
               var percentage = (currentStreamCount/totalTweetCount*100);
               console.log('completed percentage % : '+ percentage);
               if(percentage >= 100){
-                clearInterval(printCompletionPercentage);//clear interval does not seem to be working
+                clearInterval(printCompletionPercentageIntervalId);
               }
             }
-            setInterval(printCompletionPercentage, 30000);//print percentage every 30 sec
+            printCompletionPercentageIntervalId = setInterval(printCompletionPercentage, 30000);//print percentage every 30 sec
             //end debugging section;
 
             var getTimeZone = function(tweet){
