@@ -20,8 +20,7 @@ var config = require('../conf');
         this.lat = lat
         this.lng = lng;
     }
-    var MiniTData = function (sentiment, lat, lng){
-        this.sentiment = sentiment;
+    var MiniTData = function (lat, lng){
         this.coordinates = new Coordinates(lat,lng);
         this.tweetCount = 1;
         this.averageSentiment = 0;
@@ -94,7 +93,7 @@ var config = require('../conf');
                                         myData.averageSentiment = myData.averageSentiment + sentiment.score;
                                     }
                                     else{
-                                        var myData = new MiniTData(sentiment, lat, lng);
+                                        var myData = new MiniTData(lat, lng);
                                         myData.averageSentiment = sentiment.score;
                                         dataCoordinateMappedSentiment[latlng] = myData;
                                     }
@@ -112,7 +111,7 @@ var config = require('../conf');
                                             dataCoordinateMappedSentiment[latlng].tweetCount++;
                                         }
                                         else{
-                                            var myData = new MiniTData(sentiment, lat, lng);
+                                            var myData = new MiniTData(lat, lng);
                                             dataCoordinateMappedSentiment[latlng] = myData;
                                         }
                                         //streamCallback(myData);
