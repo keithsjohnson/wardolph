@@ -75,7 +75,7 @@
                     if(item.tweetCount > 20){
                             
                             var latlng = item.coordinates.lat+','+item.coordinates.lng;
-                            item.radius = Math.sqrt(item.tweetCount) * 5000;//TODO look into it.
+                            item.radius = Math.sqrt(item.tweetCount) * 3000;//TODO look into it. base it on max tweet count
                             dataCoordinateMappedSentiment[latlng] = item;
                             //dataCoordinateMappedSentiment[latlng+'0'] = item;
                             //dataCoordinateMappedSentiment[latlng+'00'] = item;

@@ -47,22 +47,34 @@ function initSocket() {
 }
 
 function drawDataPoint(tMiniData){
-	//var data = receivedData[key];
-    //console.log("jzTest1: ",tMiniData);
-    
 
-    var lng = tMiniData.coordinates.lng;
+	var lng = tMiniData.coordinates.lng;
 	var lat = tMiniData.coordinates.lat;
 	var averageSentiment = tMiniData.averageSentiment;//round it up to 2 decimal Math.round(num * 100) / 100
+	//var data = receivedData[key];
+    //console.log("jzTest1: ",tMiniData);
+    var high = [151, 83, 34];   // color of max negative sentiment
+	var low = [5, 69, 54];  // color of max positive sentiment
+	var minSnt = 0;
+	var maxSnt = 5;
+	var avgSnt = averageSentiment+2.5;//supporting sentiment range -2.5 to +2.5
+	if(avgSnt<minSnt)
+		avgSnt = minSnt;
+	if(avgSnt>maxSnt)
+		avgSnt = maxSnt;
+    var fraction = avgSnt / maxSnt;
+    var color = interpolateHsl(low, high, fraction);
+    
     var circleDrawOptions = {
       strokeColor: '#AEBFC7',
       strokeOpacity: 0.8,
       strokeWeight: 1,
-      fillColor: '#AEBFC7',
+      fillColor: color,
       fillOpacity: 0.35,
       map: googleMap,
       center: new google.maps.LatLng(lat,lng),
-      radius: tMiniData.radius
+      radius: tMiniData.radius,
+      zIndex: -tMiniData.tweetCount
     };
     // Add the circle to the map.
     var tCircle = new google.maps.Circle(circleDrawOptions);
@@ -72,6 +84,16 @@ function drawDataPoint(tMiniData){
 
     google.maps.event.addListener(tCircle,'mouseout',function(){
          this.getMap().getDiv().removeAttribute('title');});
+}
+
+function interpolateHsl(lowHsl, highHsl, fraction) {
+  var color = [];
+  for (var i = 0; i < 3; i++) {
+    // Calculate color based on the fraction.
+    color[i] = (highHsl[i] - lowHsl[i]) * fraction + lowHsl[i];
+  }
+
+  return 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)';
 }
 
 
