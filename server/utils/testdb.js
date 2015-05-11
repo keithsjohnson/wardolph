@@ -9,7 +9,7 @@ var mongoClient = mongo.MongoClient;
 mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
       if(!err) {
         console.log("mongodb: We are connected");
-        var collection = db.collection('feminism');
+        //var collection = db.collection('feminism');
         
         //collection.drop();
         
@@ -18,7 +18,7 @@ mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) 
         var testPrint = function(){
             console.log('testprint');
             //collection.drop();
-            collection.find().toArray(function(err, items) {console.log(items);});
+            //collection.find().toArray(function(err, items) {console.log(items);});
  
         };
         
