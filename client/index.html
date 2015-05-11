@@ -1,19 +1,32 @@
 <!doctype html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="wardolphMain" ng-controller="AppCtrl">
   <head>
-    <title>Wardolph</title>
+    <title ng-bind="pageTitle"></title>
     <link rel="icon" 
       type="image/png" 
       href="/img/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/bootstrap-flatly.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/wardolph.css">
 
+    <script type="text/javascript" src="/js/vendor/angular.min.js"></script>
+    <script type="text/javascript" src="/js/vendor/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="/js/vendor/angular-storage.min.js"> </script>
+    <script type="text/javascript" src="/js/vendor/angular-jwt.min.js"> </script>
+    <script type="text/javascript" src="/js/vendor/ui-bootstrap-tpls-0.13.0.min.js"> </script>
+    <script type="text/javascript" src="/js/vendor/jquery.min.js"></script>
+
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+
+    
+    <script type="text/javascript" src="/partial/home/home.js"></script>
+    <script type="text/javascript" src="/partial/login/login.js"></script>
+    <script type="text/javascript" src="/partial/admin/admin.js"></script>
+    <script type="text/javascript" src="/partial/sntMap/sntMap.js"></script>
 		<script type="text/javascript" src="/js/wardolph.js"></script>
+
 
   </head>
   <body>
@@ -24,7 +37,10 @@
           </div>
         </div>
     </div>
-    <div class="container" >
+
+    <div class="container-fluid fill" ui-view></div>
+
+   <!--  <div class="container" >
       
       <div class="page-header">
         <img class="header-icon" src="/img/icon.png" >
@@ -34,7 +50,7 @@
       </div>
       
     </div>
-    <div id="map-canvas"></div>
+    <div id="map-canvas"></div> -->
     
     
     

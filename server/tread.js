@@ -114,7 +114,7 @@
 
     }
     
-    initData();
+    //initData();
 
     var startReadingStream = function(){
         console.log("sending data");
@@ -127,6 +127,9 @@
         console.log("data sent: "+size);
     }
 
+    module.exports.initData = function() {
+        return initData();
+    }
     
     module.exports.getTData = function() {
         return dataCoordinateMappedSentiment;

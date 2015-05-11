@@ -3,91 +3,76 @@
 //
 // A simple chat server using Socket.IO, Express, and Async.
 //
-var http = require('http');
-var path = require('path');
 
-var async = require('async');
+
+
+//var async = require('async');
 var socketio = require('socket.io');
+
 var express = require('express');
-var twit = require('twit');
-var tcollect = require('./tcollect');
-var tread = require('./tread');
 
-tcollect.getSomeThings();
-//
-// ## SimpleServer `SimpleServer(obj)`
-//
-// Creates a new instance of SimpleServer with the following options:
-//  * `port` - The HTTP port to listen on. If `process.env.PORT` is set, _it overrides this value_.
-//
+var config = require('./conf');
+var master = require('./master');
+var peer = require('./peer');
 
 
-var tweetData = null;
-
-var router = express();
-var server = http.createServer(router);
-var io = socketio.listen(server);
-
-router.use(express.static(path.resolve(__dirname, '../client')));
-var messages = [];
-var sockets = [];
-
-io.on('connection', function (socket) {
-   /* messages.forEach(function (data) {
-      socket.emit('message', data);
-      var test = {name:'jzTest1',text:'jzTest Message'+tweetData, tweet:tweetData};
-      
-      socket.emit('message', test);
-    });
-    */
-    /*var streamCallback = function(item){
-      socket.emit('syncTData',item);
-    };
-    var collectedTData = tread.setStreamCallback(streamCallback);*/
-    var tData = tread.getTData();
-    socket.emit('syncTData',tData);
-    //tread.startReadingStream();
-    
-    //socket.emit('syncTData',collectedTData);
-   
-
-    sockets.push(socket);//sockets is list of open connections with clients. Number of open connections equals number of clients.
-
-    socket.on('disconnect', function () {
-      sockets.splice(sockets.indexOf(socket), 1);
-    });
-
-    socket.on('message', function (msg) {
-      var text = String(msg || '');
-
-      if (!text)
-        return;
-
-      socket.get('name', function (err, name) {
-        var data = {
-          name: name,
-          text: text
-        };
-
-        broadcast('message', data);
-        messages.push(data);
-      });
-    });
-
-    socket.on('identify', function (name) {
-      socket.set('name', String(name || 'Anonymous'), function (err) {
-      });
-    });
-  });
-
-
-function broadcast(event, data) {
-  sockets.forEach(function (socket) {
-    socket.emit(event, data);
-  });
+if(config.server.my_type == 'master'){
+  master.initMaster(express, socketio);
 }
 
-server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
-  var addr = server.address();
-  console.log("Wardolph listening at", addr.address + ":" + addr.port);
-});
+if(config.server.my_type == 'peer'){
+  peer.initPeer();
+}
+
+
+
+if(!config.server.production && config.server.my_type == 'dev' ){
+  console.log('initializing dev');
+  
+  var portInUse = function(port,callback){
+
+    var router = express();
+    var http      = require('http');
+    var server = http.createServer(router);
+
+    server.once('error', function(err) {
+      if (err.code === 'EADDRINUSE') {
+        // port is currently in use
+        
+        callback('EADDRINUSE');
+      }
+    });
+
+    server.once('listening', function() {
+      // close the server if listening doesn't fail
+      server.close();
+      callback();
+      
+    });
+
+    server.listen(port);
+
+  }
+  
+  var initServerIfPortFree = function(port){
+      portInUse(port,function(err){
+        if(err){
+          initServerIfPortFree(port+1);
+        }
+        else if(port==config.server.master_port){//master port available init master
+          master.initMaster(express, socketio);
+        }
+        else{//port available init client.. can have mutiple clients
+          peer.initPeer();
+        }
+          
+        
+      });
+  }
+
+  var port = config.server.master_port;
+  initServerIfPortFree(port);
+
+}
+
+
