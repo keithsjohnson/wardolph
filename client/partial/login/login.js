@@ -15,7 +15,7 @@ angular.module( 'wardolphMain.login', [
 
   $scope.login = function() {
     $http({
-      url: 'http://localhost:3000/sessions/create',
+      url: '/sessions/create',
       method: 'POST',
       data: $scope.user
     }).then(function(response) {

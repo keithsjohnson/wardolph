@@ -20,21 +20,21 @@ angular.module( 'wardolphMain.admin', [
   $scope.getPeerValues = function() {
 
     // Just call the API as you'd do using $http
-    callApi('Secured', 'http://localhost:3000/api/protected/peers');
+    callApi('Secured', '/api/protected/peers');
   }
 
   $scope.callAnonymousApi = function() {
     // Just call the API as you'd do using $http
-    callApi('Anonymous', 'http://localhost:3000/api/random-quote');
+    callApi('Anonymous', '/api/random-quote');
   }
 
   $scope.callSecuredApi = function() {
-    callApi('Secured', 'http://localhost:3000/api/protected/random-quote');
+    callApi('Secured', '/api/protected/random-quote');
   }
 
   $scope.updatePeers = function() {
     $http({
-      url: 'http://localhost:3000/api/protected/peers',
+      url: '/api/protected/peers',
       method: 'POST',
       data: $scope.peerData
     }).then(function(response) {
@@ -49,9 +49,7 @@ angular.module( 'wardolphMain.admin', [
           $scope.peerData[key] = returnedData[key];
         }*/
         $scope.peerData = returnedData;
-        for(key in $scope.peerData){
-          console.log("jzTest2: ",$scope.peerData[key]);
-        }
+        
       //});
       
       $scope.response = "Peer Data updated"

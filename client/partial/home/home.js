@@ -15,11 +15,11 @@ angular.module( 'wardolphMain.home', [
 
   $scope.callAnonymousApi = function() {
     // Just call the API as you'd do using $http
-    callApi('Anonymous', 'http://localhost:3000/api/random-quote');
+    callApi('Anonymous', '/api/random-quote');
   }
 
   $scope.callSecuredApi = function() {
-    callApi('Secured', 'http://localhost:3000/api/protected/random-quote');
+    callApi('Secured', '/api/protected/random-quote');
   }
 
   function callApi(type, url) {
