@@ -75,7 +75,7 @@ var startCollectingTweets = function (){
         
         mongoSaveInterval = setInterval(saveClearData, 300000);//saving every 5 min.. if you do it more the data will exceed size limit set by mondo db
         
-        
+        /*
         var testPrint = function(){
             console.log('testprint',uniqueData);
             //collection.drop();
@@ -83,7 +83,7 @@ var startCollectingTweets = function (){
  
         };
         setInterval(testPrint, 5000);//clearing every 5 sec
-        
+        */
         
         
       }
