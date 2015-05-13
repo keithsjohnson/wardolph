@@ -41,12 +41,21 @@ var startCollectingTweets = function (){
       , access_token_secret:  config.twitter.access_token_secret
     });
     
+    var ExtendedTweet = function (title, queryParam, date, type, tweet){
+        this.title = title;
+        this.queryParam = queryParam;
+        this.date = date;
+        this.type = type;
+        this.tweet = tweet;
+    }
+
     var TDataObj = function (date,type,tweet){
                         this.date = date;
                         this.type = type;
                         this.tweet = tweet;
                     };
     
+    stream = tSearch.stream('statuses/filter', { track: collectKeywords });
     
     // Connect to the db //strat mango db before trying to connect.
     mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
@@ -55,8 +64,29 @@ var startCollectingTweets = function (){
         dbGlobal = db;
         var collection = db.collection(collectionName);
         
+        
+
+        stream.on('tweet', function (newTweet) {
+            //var textData = newTweet.text;
+            //var id = newTweet.id_str;
+            
+            var now = new Date();
+
+            var extTweet = new ExtendedTweet(collectionName, collectKeywords, now, 'streamed_tweet', newTweet);
+            //console.log('jzTest saving tweet');
+            //collection.insert(extTweet);
+            collection.insert(extTweet, {w:0}, function(err, result) {});
+            //var jsonDate = now.toJSON();
+            //var tClientData = new TDataObj(jsonDate,'streamed_tweet',newTweet);
+                                
+            //do something with it
+            //collectedTData.push(tClientData);
+            //uniqueData[id] = tClientData;
+    })
+
+
         //collection.drop();
-        var saveClearData = function (){
+        /*var saveClearData = function (){
 
             
             collection.insert(uniqueData, {w:1}, function(err, result) {
@@ -70,10 +100,10 @@ var startCollectingTweets = function (){
             //saving data
             
             
-        }
+        }*/
         
         
-        mongoSaveInterval = setInterval(saveClearData, 300000);//saving every 5 min.. if you do it more the data will exceed size limit set by mondo db
+        //mongoSaveInterval = setInterval(saveClearData, 300000);//saving every 5 min.. if you do it more the data will exceed size limit set by mondo db
         
         /*
         var testPrint = function(){
@@ -97,12 +127,12 @@ var startCollectingTweets = function (){
     // var then = new Date(jsonDate);
     
     //var tQueryKeys = ""
-    stream = tSearch.stream('statuses/filter', { track: collectKeywords });
+    
     
     //var collectedTData = [];
     
     
-    var collectThroughQueries = function (){
+    var collectThroughQueries = function (){//needs updating
         tSearch.get('search/tweets', 
                 { q: collectStream, count: 100 }, //count 100 is max twitter allows
                 function(err, tweetData, response) {
@@ -123,34 +153,21 @@ var startCollectingTweets = function (){
         );
     }
     
-    if(useQueries){
-        queryInterval = setInterval(collectThroughQueries, 5000);//calling every 5 seconds as rate limit is 180 queries every 15 minutes
-    }
+    //if(useQueries){
+   //     queryInterval = setInterval(collectThroughQueries, 5000);//calling every 5 seconds as rate limit is 180 queries every 15 minutes
+    //}
     
     
     
-    
-    stream.on('tweet', function (newTweet) {
-        var textData = newTweet.text;
-        var id = newTweet.id_str;
-        
-        var now = new Date();
-        var jsonDate = now.toJSON();
-        var tClientData = new TDataObj(jsonDate,'streamed_tweet',newTweet);
-                            
-        //do something with it
-        //collectedTData.push(tClientData);
-        uniqueData[id] = tClientData;
-    })
     
 
 }
 
 var stopCollectingTweets = function(){
-    clearInterval(mongoSaveInterval);
-    if(useQueries){
-        clearInterval(queryInterval);
-    }
+    //clearInterval(mongoSaveInterval);
+    //if(useQueries){
+      //  clearInterval(queryInterval);
+    //}
     stream.stop();
     dbGlobal.close();
 }
