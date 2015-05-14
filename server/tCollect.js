@@ -82,7 +82,13 @@ var startCollectingTweets = function (){
             //do something with it
             //collectedTData.push(tClientData);
             //uniqueData[id] = tClientData;
-    })
+        });
+
+        stream.on('limit', function (limitMessage) {
+          console.log("twitter stream limit message ----start ----------------------------------------");
+          console.log(JSON.stringify(limitMessage, null, 2));
+          console.log("twitter stream limit message ----end ------------------------------------------");
+        });
 
 
         //collection.drop();
