@@ -15,7 +15,7 @@ var TDataObj = function (date,type,sentiment,tweet){
 mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
       if(!err) {
         console.log("mongodb: We are connected");
-        var collection = db.collection('feminism');
+        var collection = db.collection('test');
         
         //collection.drop();
         
@@ -53,11 +53,11 @@ mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) 
           
             currentStreamCount++;
 
-            for (key in item) {
-                if(key=='_id')
-                	continue;
-                if (item.hasOwnProperty(key)) {
-                	var tweet = item[key].tweet;
+            //for (key in item) {
+              //  if(key=='_id')
+                //	continue;
+                //if (item.hasOwnProperty(key)) {
+                	var tweet = item.tweet;
                 	if( typeof(tweet.coordinates) != 'undefined' && tweet.coordinates!=null){
                 		coordinatesCount++;
                 	}
@@ -78,8 +78,8 @@ mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) 
                 	}
 
                 	tweetCount++;
-                }
-            }//end for loop 
+                //}
+            //}//end for loop 
             // console.log(JSON.stringify(item, null, 2));
             //console.log(JSON.stringify(duplicateTest, null, 2));
           
