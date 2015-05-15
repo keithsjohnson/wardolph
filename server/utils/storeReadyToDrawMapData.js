@@ -1,6 +1,7 @@
 
 var mongo = require('mongodb');
 var config = require('../conf');
+var sntApi = require('sentiment');
 
     var mongoClient = mongo.MongoClient;
 
@@ -34,9 +35,9 @@ var config = require('../conf');
         mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
           if(!err) {
             console.log("tread: We are connected to mongo db");
-            var collection = db.collection('feminism');//try feminismCoordinate for smaller set
+            var collection = db.collection(config.peer.list_name);//try feminismCoordinate for smaller set
             var timezoneCol = db.collection('timezone');
-            var readyToDraw = db.collection('feminism_readyToDraw');
+            var readyToDraw = db.collection(config.peer.list_name+'_readyToDraw');
             readyToDraw.drop();
             var timezone = null;
             var dataCoordinateMappedSentiment = {};
@@ -50,11 +51,24 @@ var config = require('../conf');
             });
             var currentStreamCount = 0;
             var printCompletionPercentageIntervalId = 0;
+            var readyToSave = false;
             var printCompletionPercentage = function(){
               var percentage = (currentStreamCount/totalTweetCount*100);
               console.log('completed percentage % : '+ percentage);
-              if(percentage >= 100){
+              if(percentage >= 100 && readyToSave){
                 clearInterval(printCompletionPercentageIntervalId);
+
+                console.log("saving data");
+                var size = 0;
+                for (key in dataCoordinateMappedSentiment) {
+                    var data = dataCoordinateMappedSentiment[key];
+                    data.averageSentiment = data.averageSentiment / data.tweetCount;
+                    //console.log(JSON.stringify(data, null, 1));
+                    //TODO save data here
+                    readyToDraw.insert(data, { w: 1 }, function(err, result) { if(err)console.log("err: "+err);});
+                    size++;
+                }
+                console.log("data saved: "+size);
               }
             }
             printCompletionPercentageIntervalId = setInterval(printCompletionPercentage, 30000);//print percentage every 30 sec
@@ -91,18 +105,20 @@ var config = require('../conf');
                 var firststream = true;
                 stream.on("data", function(item) {
 
-                    for (key in item) {
+                    //for (key in item) {
                         
-                        if (key!='_id' && item.hasOwnProperty(key)) {
-                            var sentiment = item[key].sentiment;
-                            var tweet = item[key].tweet;
+                        //if (key!='_id' && item.hasOwnProperty(key)) {
+                            //var sentiment = item[key].sentiment;
+                        if(typeof(item.tweet)!='undefined' && typeof(item.tweet.text)!='undefined'){
+                            var tweet = item.tweet;
+                            var sentiment = sntApi(item.tweet.text);
                             if(tweet!=null && typeof(tweet)!='undefined' && sentiment.words.length>0){
                                 if( tweet.coordinates!=null && typeof(tweet.coordinates) != 'undefined'){
                                     var lat = tweet.coordinates.coordinates[1];
                                     var lng = tweet.coordinates.coordinates[0];
                                     
                                     storeInLatLongMap(lat,lng,sentiment);
-                                    
+                                    //console.log('jzTest1 sentiment: '+sentiment.score+' tweet:  '+tweet.text);
                                 }
                                 else{
                                     var timezoneFound = getTimeZone(tweet);
@@ -111,11 +127,13 @@ var config = require('../conf');
                                         var lng = timezoneFound.lng;
                                         
                                         storeInLatLongMap(lat,lng,sentiment);
+                                        //console.log('jzTest1 sentiment: '+sentiment.score+' tweet:  '+tweet.text);
                                     }
                                 }
                             }
                         }
-                    }//end for loop 
+                      //  }
+                    //}//end for loop 
                     
                     
                     
@@ -124,18 +142,9 @@ var config = require('../conf');
                     
                 });
 
-                stream.on("end", function() {
-                    console.log("saving data");
-                    var size = 0;
-                    for (key in dataCoordinateMappedSentiment) {
-                        var data = dataCoordinateMappedSentiment[key];
-                        data.averageSentiment = data.averageSentiment / data.tweetCount;
-                        //console.log(JSON.stringify(data, null, 1));
-                        //TODO save data here
-                        readyToDraw.insert(data, { w: 1 }, function(err, result) { if(err)console.log("err: "+err);});
-                        size++;
-                    }
-                    console.log("data saved: "+size);
+                stream.on("end", function() {//check if all processing complete before storing.
+                    readyToSave = true;
+                    
                 });
             }
             
