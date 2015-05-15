@@ -73,15 +73,10 @@ var startCollectingTweets = function (){
             var now = new Date();
 
             var extTweet = new ExtendedTweet(collectionName, collectKeywords, now, 'streamed_tweet', newTweet);
-            //console.log('jzTest saving tweet');
-            //collection.insert(extTweet);
             collection.insert(extTweet, {w:0}, function(err, result) {});
             //var jsonDate = now.toJSON();
             //var tClientData = new TDataObj(jsonDate,'streamed_tweet',newTweet);
                                 
-            //do something with it
-            //collectedTData.push(tClientData);
-            //uniqueData[id] = tClientData;
         });
 
         stream.on('limit', function (limitMessage) {
@@ -91,25 +86,6 @@ var startCollectingTweets = function (){
         });
 
 
-        //collection.drop();
-        /*var saveClearData = function (){
-
-            
-            collection.insert(uniqueData, {w:1}, function(err, result) {
-                if(err)
-                    console.log("data saved err: "+err);
-            });
-            
-            console.log("saving Data ");
-            uniqueData = {};
-            
-            //saving data
-            
-            
-        }*/
-        
-        
-        //mongoSaveInterval = setInterval(saveClearData, 300000);//saving every 5 min.. if you do it more the data will exceed size limit set by mondo db
         
         /*
         var testPrint = function(){
