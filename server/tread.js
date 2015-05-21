@@ -30,6 +30,15 @@
         this.tweetCount = 1;
         this.averageSentiment = 0;
     }
+
+    var interpolateArea = function(tweetCount, maxTweetCount){//will interpolate circle area
+        var minRadius = 100;
+        var maxRadius = 1000000;
+        var minTweetCount = 0;//not really true but helps draw tweet when there is just one.
+
+        returnValue = minRadius + (tweetCount-minTweetCount)/(maxTweetCount - minTweetCount) * (maxRadius - minRadius)
+        return returnValue;
+    }
     
     var dataCoordinateMappedSentiment = {};
 
@@ -41,11 +50,56 @@
         mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
           if(!err) {
             console.log("tread: We are connected to mongo db");
-            var readyToDrawCollection = db.collection('feminism_readyToDraw');
+            var readyToDrawCollection = db.collection(config.peer.list_name+'_readyToDraw');
             var timezoneCol = db.collection('timezone');
             var timezone = null;
-            
+            var maxTweetCount = 0;
 
+            var startStreaming = function(){
+                var stream = readyToDrawCollection.find().stream();
+
+                var firststream = true;
+                stream.on("data", function(item) {
+
+                    if(item.tweetCount > 10){//if(item.tweetCount > 20){
+                            
+                            var latlng = item.coordinates.lat+','+item.coordinates.lng;
+                            //console.log(interpolateArea(item.tweetCount, maxTweetCount));
+                            item.radius = Math.sqrt(interpolateArea(item.tweetCount, maxTweetCount))*1000;//converting area into radius.. sort of..
+                            //item.radius = Math.sqrt(item.tweetCount) * 3000;//max radius should be 950,000
+                            dataCoordinateMappedSentiment[latlng] = item;
+                            //dataCoordinateMappedSentiment[latlng+'0'] = item;
+                            //dataCoordinateMappedSentiment[latlng+'00'] = item;
+                            //dataCoordinateMappedSentiment[latlng+'000'] = item;
+                    }
+                    
+                    
+                    //currentStreamCount++;//only for debugging
+                    
+                    
+                });
+
+                stream.on("end", function() {
+                    console.log('tread data initialized');
+                });
+            }
+            
+            readyToDrawCollection.aggregate(
+                [
+                 {
+                   $group:
+                     {
+                        _id:null,
+                        maxCount: { $max: "$tweetCount" }
+                     }
+                 }
+               ], 
+               function(err, result) {
+                  //console.dir(result);
+                  //console.log('aggregate result: '+result[0].maxCount);
+                  maxTweetCount = result[0].maxCount;
+                  startStreaming();
+              });
 
             //start debugging section;
         /*    var totalTweetCount = 1;
@@ -66,31 +120,8 @@
 */
             
 
-            
-                var stream = readyToDrawCollection.find().stream();
 
-                var firststream = true;
-                stream.on("data", function(item) {
-
-                    if(item.tweetCount > 20){
-                            
-                            var latlng = item.coordinates.lat+','+item.coordinates.lng;
-                            item.radius = Math.sqrt(item.tweetCount) * 3000;//TODO look into it. base it on max tweet count
-                            dataCoordinateMappedSentiment[latlng] = item;
-                            //dataCoordinateMappedSentiment[latlng+'0'] = item;
-                            //dataCoordinateMappedSentiment[latlng+'00'] = item;
-                            //dataCoordinateMappedSentiment[latlng+'000'] = item;
-                    }
-                    
-                    
-                    //currentStreamCount++;//only for debugging
-                    
-                    
-                });
-
-                stream.on("end", function() {
-                    console.log('tread data initialized');
-                });
+                
             
 
             
@@ -113,6 +144,8 @@
         });
 
     }
+
+    
     
     //initData();
 
