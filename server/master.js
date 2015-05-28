@@ -65,10 +65,13 @@ var initMaster = function (express, socketio){
     tread.initData();
     io.on('connection', function (socket) {
 
+        console.log('event connection');
 
-        var tData = tread.getTData();
-        socket.emit('syncTData',tData);
-               
+        socket.on('getSyncData', function(data){
+          console.log('event getSyncData');
+          var tData = tread.getTData();
+          socket.emit('syncTData',tData);
+        });
 
         sockets.push(socket);//sockets is list of open connections with clients. Number of open connections equals number of clients.
 
@@ -77,6 +80,8 @@ var initMaster = function (express, socketio){
         });
 
     });
+
+    
  
     server.listen(config.server.master_port, process.env.IP || "0.0.0.0", function(){
       var addr = server.address();

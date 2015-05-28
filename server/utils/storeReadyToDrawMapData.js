@@ -21,10 +21,11 @@ var sntApi = require('sentiment');
         this.lat = lat
         this.lng = lng;
     }
-    var MiniTData = function (lat, lng){
+    var MiniTData = function (lat, lng, topic){
         this.coordinates = new Coordinates(lat,lng);
-        this.tweetCount = 1;
+        this.tweetCount = 0;
         this.averageSentiment = 0;
+        this.topic = topic;
     }
     
     var startReadingStream = function (){
@@ -40,6 +41,7 @@ var sntApi = require('sentiment');
             var readyToDraw = db.collection(config.peer.list_name+'_readyToDraw');
             readyToDraw.drop();
             var timezone = null;
+            var keywordDataMap = {};
             var dataCoordinateMappedSentiment = {};
 
 
@@ -60,14 +62,22 @@ var sntApi = require('sentiment');
 
                 console.log("saving data");
                 var size = 0;
-                for (key in dataCoordinateMappedSentiment) {
+                for(topic in keywordDataMap){
+                    for(latlng in keywordDataMap[topic]){
+                        var data = keywordDataMap[topic][latlng];
+                        data.averageSentiment = data.averageSentiment / data.tweetCount;
+                        readyToDraw.insert(data, { w: 1 }, function(err, result) { if(err)console.log("err: "+err);});
+                        size++;
+                    }
+                }
+                /*for (key in dataCoordinateMappedSentiment) {
                     var data = dataCoordinateMappedSentiment[key];
                     data.averageSentiment = data.averageSentiment / data.tweetCount;
                     //console.log(JSON.stringify(data, null, 1));
                     //TODO save data here
                     readyToDraw.insert(data, { w: 1 }, function(err, result) { if(err)console.log("err: "+err);});
                     size++;
-                }
+                }*/
                 console.log("data saved: "+size);
               }
             }
@@ -85,18 +95,38 @@ var sntApi = require('sentiment');
                 return timezoneFound;
             }
 
-            var storeInLatLongMap = function(lat, lng, sentiment){
+            var storeInLatLongMap = function(lat, lng, sentiment, topic){
                 var latlng = lat+','+lng;
-                if( typeof(dataCoordinateMappedSentiment[latlng])!='undefined'){
-                    var myData = dataCoordinateMappedSentiment[latlng];
-                    myData.tweetCount++;
-                    myData.averageSentiment = myData.averageSentiment + sentiment.score;
+                if(typeof(keywordDataMap[topic]) == 'undefined'){
+                    keywordDataMap[topic] = {};
                 }
-                else{
-                    var myData = new MiniTData(lat, lng);
-                    myData.averageSentiment = sentiment.score;
-                    dataCoordinateMappedSentiment[latlng] = myData;
+                if(typeof(keywordDataMap[topic][latlng]) == 'undefined'){
+                    var miniData = new MiniTData(lat, lng, topic);
+                    keywordDataMap[topic][latlng] = miniData;
                 }
+                var miniData = keywordDataMap[topic][latlng];
+                miniData.tweetCount++;
+                miniData.averageSentiment = miniData.averageSentiment + sentiment.score;
+                //console.log('storing: '+topic+' '+lat+' '+lng);
+
+                if(topic != 'all'){
+                    storeInLatLongMap(lat, lng, sentiment, 'all');
+                }
+            }
+
+            var filterData = config.client.filterData[config.peer.list_name];
+            console.log('classifying data on: '+JSON.stringify(filterData, null, 1));
+            var findTopic = function(text){
+                
+                for (key in filterData) {
+                    var filterArr = filterData[key];
+                    for (var i = 0; i < filterArr.length; i++) {
+                        if(text.indexOf(filterArr[i]) > -1) {
+                            return key;
+                        }
+                    };
+                }
+                return 'all';
             }
 
             var initStream = function(){
@@ -109,15 +139,17 @@ var sntApi = require('sentiment');
                         
                         //if (key!='_id' && item.hasOwnProperty(key)) {
                             //var sentiment = item[key].sentiment;
-                        if(typeof(item.tweet)!='undefined' && typeof(item.tweet.text)!='undefined'){
-                            var tweet = item.tweet;
-                            var sentiment = sntApi(item.tweet.text);
+                            var item2 = item[key];
+                        if(typeof(item2.tweet)!='undefined' && typeof(item2.tweet.text)!='undefined'){
+                            var tweet = item2.tweet;
+                            var sentiment = sntApi(item2.tweet.text);
+                            var topic = findTopic(item2.tweet.text);
                             if(tweet!=null && typeof(tweet)!='undefined' && sentiment.words.length>0){
                                 if( tweet.coordinates!=null && typeof(tweet.coordinates) != 'undefined'){
                                     var lat = tweet.coordinates.coordinates[1];
                                     var lng = tweet.coordinates.coordinates[0];
                                     
-                                    storeInLatLongMap(lat,lng,sentiment);
+                                    storeInLatLongMap(lat,lng,sentiment,topic);
                                     //console.log('jzTest1 sentiment: '+sentiment.score+' tweet:  '+tweet.text);
                                 }
                                 else{
@@ -126,13 +158,13 @@ var sntApi = require('sentiment');
                                         var lat = timezoneFound.lat;
                                         var lng = timezoneFound.lng;
                                         
-                                        storeInLatLongMap(lat,lng,sentiment);
+                                        storeInLatLongMap(lat,lng,sentiment,topic);
                                         //console.log('jzTest1 sentiment: '+sentiment.score+' tweet:  '+tweet.text);
                                     }
                                 }
                             }
                         }
-                      //  }
+                        //}
                     //}//end for loop 
                     
                     

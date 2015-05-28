@@ -1,0 +1,25 @@
+<div  class="fill">
+
+	<div class="container page-header">
+        <img class="header-icon" src="/img/icon.png" >
+        <h1>Wardolph</h1>
+        <p>Sentiment analysis.</p>
+        <p id="data-received">Data Received: <strong>0</strong></p>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+              
+                <ul class="nav navbar-nav">
+                  <li ng-repeat="(filterKey, filterItem) in filterData" ng-class="{ 'active': activeFilter==filterKey}">
+                  	<a href="javascript:void(0)" ng-click="initFilter(filterKey)">{{filterKey}}</a>
+                  </li>
+                  
+                </ul>
+               
+            </div>
+          </nav>
+    </div>
+    <div id="map-canvas" ></div>
+    
+    
+
+</div>

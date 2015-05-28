@@ -67,7 +67,7 @@
                             //console.log(interpolateArea(item.tweetCount, maxTweetCount));
                             item.radius = Math.sqrt(interpolateArea(item.tweetCount, maxTweetCount))*1000;//converting area into radius.. sort of..
                             //item.radius = Math.sqrt(item.tweetCount) * 3000;//max radius should be 950,000
-                            dataCoordinateMappedSentiment[latlng] = item;
+                            dataCoordinateMappedSentiment[item.topic+latlng] = item;
                             //dataCoordinateMappedSentiment[latlng+'0'] = item;
                             //dataCoordinateMappedSentiment[latlng+'00'] = item;
                             //dataCoordinateMappedSentiment[latlng+'000'] = item;

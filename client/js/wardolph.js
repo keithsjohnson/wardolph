@@ -4,13 +4,14 @@ angular.module( 'wardolphMain', [
   'wardolphMain.home',
   'wardolphMain.login',
   'wardolphMain.sntMap',
+  'wardolphMain.sentimentAnalysis',
   'wardolphMain.admin',
   'angular-jwt',
   'angular-storage',
   'ui.bootstrap'
 ])
 .config( function myAppConfig ($urlRouterProvider, jwtInterceptorProvider, $httpProvider) {
-  $urlRouterProvider.otherwise('/sntMap');
+  $urlRouterProvider.otherwise('/sentimentAnalysis/feminism');
 
   jwtInterceptorProvider.tokenGetter = function(store) {
     return store.get('jwt');
