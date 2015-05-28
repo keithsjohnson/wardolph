@@ -58,6 +58,7 @@ angular.module( 'wardolphMain.admin', [
     }, function(error) {
       $scope.response = error.data;
       //alert(error.data);
+      console.log(error.data);
     });
   }
 
@@ -72,6 +73,7 @@ angular.module( 'wardolphMain.admin', [
     }, function(error) {
 
       $scope.response = error.data;
+      console.log(error.data);
     });
   }
 
