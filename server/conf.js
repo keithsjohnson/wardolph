@@ -23,4 +23,14 @@ config.peer.name = 'peerFem';
 config.peer.list_name = 'test';//'feminism';//list name to save data on
 config.peer.keywords = ["feminism", "feminist", "women's rights", "gender crime"];//keywords to collect data on
 
+config.client = {};//client is the user visiting us via browser
+config.client.filterData = {};//can contain filterdata for multiple lists
+
+config.client.filterData[config.peer.list_name] =	{
+								feminism: ["feminism"],
+								feminist: ["feminist"],
+								womensRights: ["women's rights", "rights of women"],
+								genderCrime: ['gender crime']
+							}
+							
 module.exports = config;
