@@ -139,11 +139,11 @@ var sntApi = require('sentiment');
                         
                         //if (key!='_id' && item.hasOwnProperty(key)) {
                             //var sentiment = item[key].sentiment;
-                            var item2 = item[key];
-                        if(typeof(item2.tweet)!='undefined' && typeof(item2.tweet.text)!='undefined'){
-                            var tweet = item2.tweet;
-                            var sentiment = sntApi(item2.tweet.text);
-                            var topic = findTopic(item2.tweet.text);
+                            //var item2 = item[key];
+                        if(typeof(item.tweet)!='undefined' && typeof(item.tweet.text)!='undefined'){
+                            var tweet = item.tweet;
+                            var sentiment = sntApi(item.tweet.text);
+                            var topic = findTopic(item.tweet.text);
                             if(tweet!=null && typeof(tweet)!='undefined' && sentiment.words.length>0){
                                 if( tweet.coordinates!=null && typeof(tweet.coordinates) != 'undefined'){
                                     var lat = tweet.coordinates.coordinates[1];
