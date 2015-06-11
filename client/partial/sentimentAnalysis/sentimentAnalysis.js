@@ -1,7 +1,9 @@
 
 
 angular.module( 'wardolphMain.sentimentAnalysis', [
-  'ui.router'
+  'ui.router',
+  'angulartics',
+  'angulartics.google.analytics'
 ])
 .config(function($stateProvider) {
   $stateProvider.state('sentimentAnalysis', {
@@ -10,7 +12,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
     templateUrl: '/partial/sentimentAnalysis/sentimentAnalysis.html'
   });
 })
-.controller( 'SentimentAnalysisCtrl', function SentimentAnalysisController( $scope, $http, $stateParams) {
+.controller( 'SentimentAnalysisCtrl', function SentimentAnalysisController( $scope, $http, $stateParams, $analytics) {
 
 	$scope.mapInit = mapInit;
 	$scope.activeFilter = 'all';
@@ -67,6 +69,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 
 		};
 		drawData(receivedMapData);
+		$analytics.eventTrack('sentimentAnalysisFilter', {  category: pageTitle, label: filterKey });
 	}
 
 	function initSocket() {
