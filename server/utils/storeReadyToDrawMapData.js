@@ -137,7 +137,7 @@ var sntApi = require('sentiment');
                         for (var i = 0; i < filterArr.length; i++) {
                             var match = url.match(new RegExp(filterArr[i], "i"));
                             if(match) {
-                                console.log("url topic: "+key);
+                                //console.log("url topic: "+key);
                                 return key;
                             }
                         };
