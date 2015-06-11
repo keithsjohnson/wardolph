@@ -78,7 +78,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 
 	    socket.on('connect', function () {
 	    	
-	    	console.log("connected to server");
+	    	//console.log("connected to server");
 	    });
 
 	    socket.emit('getSyncData', { getSyncData: pageTitleJson });//page initiializing. ask for syncData
