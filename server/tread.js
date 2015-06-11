@@ -40,23 +40,18 @@
         return returnValue;
     }
     
-    var dataCoordinateMappedSentiment = {};
+    var mapData = {};
 
     var initData = function (){
 
 
-
-        // Connect to the db //strat mango db before trying to connect.
-        mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
-          if(!err) {
-            console.log("tread: We are connected to mongo db");
-            var readyToDrawCollection = db.collection(config.peer.list_name+'_readyToDraw');
-            var timezoneCol = db.collection('timezone');
-            var timezone = null;
+        var initCollection = function(collection, collectionName){
+            mapData[collectionName] = {};
+            
             var maxTweetCount = 0;
 
             var startStreaming = function(){
-                var stream = readyToDrawCollection.find().stream();
+                var stream = collection.find().stream();
 
                 var firststream = true;
                 stream.on("data", function(item) {
@@ -67,10 +62,10 @@
                             //console.log(interpolateArea(item.tweetCount, maxTweetCount));
                             item.radius = Math.sqrt(interpolateArea(item.tweetCount, maxTweetCount))*1000;//converting area into radius.. sort of..
                             //item.radius = Math.sqrt(item.tweetCount) * 3000;//max radius should be 950,000
-                            dataCoordinateMappedSentiment[item.topic+latlng] = item;
-                            //dataCoordinateMappedSentiment[latlng+'0'] = item;
-                            //dataCoordinateMappedSentiment[latlng+'00'] = item;
-                            //dataCoordinateMappedSentiment[latlng+'000'] = item;
+                            if(typeof(mapData[collectionName][item.topic]) == 'undefined'){
+                                mapData[collectionName][item.topic] = {};
+                            }
+                            mapData[collectionName][item.topic][latlng] = item;
                     }
                     
                     
@@ -84,7 +79,7 @@
                 });
             }
             
-            readyToDrawCollection.aggregate(
+            collection.aggregate(
                 [
                  {
                    $group:
@@ -100,42 +95,22 @@
                   maxTweetCount = result[0].maxCount;
                   startStreaming();
               });
+        }
 
-            //start debugging section;
-        /*    var totalTweetCount = 1;
-            collection.count(function(err, countRet) {
-              totalTweetCount = countRet;
-                console.log('total collections elements: '+totalTweetCount);
-            });
-            var currentStreamCount = 0;
-            var printCompletionPercentage = function(){
-              var percentage = (currentStreamCount/totalTweetCount*100);
-              console.log('completed percentage % : '+ percentage);
-              if(percentage >= 100){
-                clearInterval(printCompletionPercentage);
-              }
+        //use format mapData[listName][topic][latlng]
+        // Connect to the db //strat mango db before trying to connect.
+        mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) {
+          if(!err) {
+            console.log("tread: We are connected to mongo db");
+
+            for(key in config.client.filterData){
+                var readyToDrawCollection = db.collection(key+'_readyToDraw');
+                initCollection(readyToDrawCollection,key);
             }
-            setInterval(printCompletionPercentage, 30000);//print percentage every 30 sec
-            //end debugging section;
-*/
-            
 
-
-                
+            //var readyToDrawCollection = db.collection(config.peer.list_name+'_readyToDraw');
+            //initCollection(readyToDrawCollection,config.peer.list_name);
             
-
-            
-
-            
-
-            /*collection.find().toArray(function(err, items) {
-                //console.log(items);
-                tweetsWithCoordinates = items;
-            });*/
-            
-            //to decript json date object
-            // var jsonDate = "2011-05-26T07:56:00.123Z";
-            // var then = new Date(jsonDate);
             
           }
           else{
@@ -147,34 +122,17 @@
 
     
     
-    //initData();
-
-    var startReadingStream = function(){
-        console.log("sending data");
-        var size = 0;
-        for (key in dataCoordinateMappedSentiment) {
-            var data = dataCoordinateMappedSentiment[key];
-            streamCallback(data);
-            size++;
-        }
-        console.log("data sent: "+size);
-    }
+    
 
     module.exports.initData = function() {
         return initData();
     }
     
-    module.exports.getTData = function() {
-        return dataCoordinateMappedSentiment;
+    module.exports.getTData = function(topic) {
+        return mapData[topic];
     }
 
-    module.exports.setStreamCallback = function(callback) {
-        streamCallback = callback;
-    }
 
-    module.exports.startReadingStream = function() {
-        startReadingStream();
-    }
     
 
 }());

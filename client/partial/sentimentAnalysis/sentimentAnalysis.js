@@ -77,12 +77,12 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	    	console.log("connected to server");
 	    });
 
-	    socket.emit('getSyncData', { getSyncData: 'true' });//page initiializing. ask for syncData
+	    socket.emit('getSyncData', { getSyncData: topicJson });//page initiializing. ask for syncData
 
 	    var dataReceivedCount = 0;
 	    socket.on('syncTData', function (receivedData) {//TODO when server restarts and sends data again. reInit map and draw new points. or ignore it completely
 	    	receivedMapData = receivedData;
-			console.log("data received");
+			//console.log("data received", receivedData);
 			for (key in receivedData) {
 	            
 	            dataReceivedCount++;
@@ -117,11 +117,11 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 
 	function drawData(data){
 		var activeFilter = $scope.activeFilter;
-		for (key in data) {
-            var tMiniData = data[key];
-            if(tMiniData.topic == activeFilter){
-            	drawDataPoint(tMiniData);
-            }
+		var filteredData = data[activeFilter];
+
+		for (key in filteredData) {
+            var tMiniData = filteredData[key];
+            drawDataPoint(tMiniData);
         }
 
 	}
