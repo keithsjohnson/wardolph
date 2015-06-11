@@ -135,8 +135,8 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	    var high = [151, 83, 34];   // color of max negative sentiment
 		var low = [5, 69, 54];  // color of max positive sentiment
 		var minSnt = 0;
-		var maxSnt = 5;
-		var avgSnt = averageSentiment+2.5;//supporting sentiment range -2.5 to +2.5
+		var maxSnt = 2;
+		var avgSnt = averageSentiment+maxSnt/2;//supporting sentiment range -2.5 to +2.5
 		if(avgSnt<minSnt)
 			avgSnt = minSnt;
 		if(avgSnt>maxSnt)
@@ -149,7 +149,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	      strokeOpacity: 0.8,
 	      strokeWeight: 1,
 	      fillColor: color,
-	      fillOpacity: 0.35,
+	      fillOpacity: 0.4,
 	      map: googleMap,
 	      center: new google.maps.LatLng(lat,lng),
 	      radius: tMiniData.radius,
