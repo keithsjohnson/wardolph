@@ -131,7 +131,7 @@ var sntApi = require('sentiment');
                 if(tweet.entities.urls.length > 0){
                     
                     var url = tweet.entities.urls[0].expanded_url;
-                    console.log("found url: "+url);
+                    //console.log("found url: "+url);
                     for (key in filterData) {
                         var filterArr = filterData[key];
                         for (var i = 0; i < filterArr.length; i++) {
