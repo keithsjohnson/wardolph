@@ -32,7 +32,7 @@
     }
 
     var interpolateArea = function(tweetCount, maxTweetCount){//will interpolate circle area
-        var minRadius = 100;
+        var minRadius = 1000;
         var maxRadius = 1000000;
         var minTweetCount = 0;//not really true but helps draw tweet when there is just one.
 
