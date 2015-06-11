@@ -96,6 +96,7 @@ var sntApi = require('sentiment');
             }
 
             var storeInLatLongMap = function(lat, lng, sentiment, topic){
+                
                 var latlng = lat+','+lng;
                 if(typeof(keywordDataMap[topic]) == 'undefined'){
                     keywordDataMap[topic] = {};
@@ -116,15 +117,31 @@ var sntApi = require('sentiment');
 
             var filterData = config.client.filterData[config.peer.list_name];
             console.log('classifying data on: '+JSON.stringify(filterData, null, 1));
-            var findTopic = function(text){
-                
+            var findTopic = function(tweet){
+                var text = tweet.text;
                 for (key in filterData) {
                     var filterArr = filterData[key];
                     for (var i = 0; i < filterArr.length; i++) {
-                        if(text.indexOf(filterArr[i]) > -1) {
+                        var match = text.match(new RegExp(filterArr[i], "i"));
+                        if(match) {
                             return key;
                         }
                     };
+                }
+                if(tweet.entities.urls.length > 0){
+                    
+                    var url = tweet.entities.urls[0].expanded_url;
+                    console.log("found url: "+url);
+                    for (key in filterData) {
+                        var filterArr = filterData[key];
+                        for (var i = 0; i < filterArr.length; i++) {
+                            var match = url.match(new RegExp(filterArr[i], "i"));
+                            if(match) {
+                                console.log("url topic: "+key);
+                                return key;
+                            }
+                        };
+                    }
                 }
                 return 'all';
             }
@@ -137,13 +154,13 @@ var sntApi = require('sentiment');
 
                     //for (key in item) {
                         
-                        //if (key!='_id' && item.hasOwnProperty(key)) {
+                      //  if (key!='_id' && item.hasOwnProperty(key)) {
                             //var sentiment = item[key].sentiment;
-                            //var item2 = item[key];
+                            //var item2 = item;//item[key];
                         if(typeof(item.tweet)!='undefined' && typeof(item.tweet.text)!='undefined'){
                             var tweet = item.tweet;
                             var sentiment = sntApi(item.tweet.text);
-                            var topic = findTopic(item.tweet.text);
+                            var topic = findTopic(item.tweet);
                             if(tweet!=null && typeof(tweet)!='undefined' && sentiment.words.length>0){
                                 if( tweet.coordinates!=null && typeof(tweet.coordinates) != 'undefined'){
                                     var lat = tweet.coordinates.coordinates[1];
