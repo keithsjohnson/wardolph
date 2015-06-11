@@ -34,8 +34,11 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	      method: 'GET',
 	      params: topicJson
 	    }).then(function(response) {
-	      var returnedData = response.data
+	      var returnedData = response.data;
 
+	      if(typeof(returnedData.All) == 'undefined'){
+	      	returnedData.all = ['all'];
+	      }
 	      //console.log('returnedData: ',returnedData)
 	        $scope.filterData = returnedData;
 	        mapInit();
