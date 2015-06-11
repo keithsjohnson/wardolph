@@ -49,14 +49,13 @@
             mapData[collectionName] = {};
             
             var maxTweetCount = 0;
-
             var startStreaming = function(){
                 var stream = collection.find().stream();
 
                 var firststream = true;
                 stream.on("data", function(item) {
 
-                    if(item.tweetCount > 10){//if(item.tweetCount > 20){
+                    if(item.tweetCount > 0){//if(item.tweetCount > 20){
                             
                             var latlng = item.coordinates.lat+','+item.coordinates.lng;
                             //console.log(interpolateArea(item.tweetCount, maxTweetCount));
@@ -66,16 +65,33 @@
                                 mapData[collectionName][item.topic] = {};
                             }
                             mapData[collectionName][item.topic][latlng] = item;
-                    }
-                    
-                    
-                    //currentStreamCount++;//only for debugging
-                    
+                    }                    
                     
                 });
+                
+                var cleanData = function(){
+                    console.log('cleaning data');
+                    var dataToClean = mapData[collectionName];
+                    var valuesToKeep = 200;//number of latlng values to keep for each topic
+                    for(topic in dataToClean){
+                        var topicData = dataToClean[topic];
+                        //sorting all latlng based on tweet count
+                        var keysSorted = Object.keys(topicData).sort(function(a,b){return topicData[b].tweetCount-topicData[a].tweetCount});
+                        console.log('topic: '+topic+' value count: '+keysSorted.length);
+                        //keeping top few latlng
+                        if(keysSorted.length > valuesToKeep){ 
+                            for (var i = valuesToKeep; i < keysSorted.length; i++) {
+                                var key = keysSorted[i];
+                                delete topicData[key];
+                            };
+                        }
+                        
+                    }
+
+                }
 
                 stream.on("end", function() {
-                    console.log('tread data initialized');
+                    setTimeout(cleanData, 1000);
                 });
             }
             
