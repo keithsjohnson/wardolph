@@ -6,6 +6,7 @@ angular.module( 'wardolphMain', [
   'wardolphMain.sntMap',
   'wardolphMain.sentimentAnalysis',
   'wardolphMain.admin',
+  'wardolphMain.blog',
   'angular-jwt',
   'angular-storage',
   'ui.bootstrap',
