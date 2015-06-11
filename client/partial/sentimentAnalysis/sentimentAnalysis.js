@@ -16,6 +16,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	$scope.activeFilter = 'all';
 	$scope.initFilter = initFilter;
 	var pageTitle = $stateParams.pageTitle;
+	$scope.pageTitle = pageTitle;
 	var pageTitleJson = {pageTitle: pageTitle};
 
 	var googleMap;
@@ -83,10 +84,10 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	    socket.on('syncTData', function (receivedData) {//TODO when server restarts and sends data again. reInit map and draw new points. or ignore it completely
 	    	receivedMapData = receivedData;
 			//console.log("data received", receivedData);
-			for (key in receivedData) {
+			/*for (key in receivedData) {
 	            
 	            dataReceivedCount++;
-	        }
+	        }*/
 			/*var lng = receivedData.coordinates.lng;
 			var lat = receivedData.coordinates.lat;
 			var averageSentiment = receivedData.averageSentiment;*/
@@ -99,8 +100,8 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 
 			/*dataReceivedCount++;*/
 	      //console.log("averageSentiment: "+receivedData.averageSentiment);
-	      $('#data-received strong').text(dataReceivedCount);
-	      drawData(receivedData);
+	      //$('#data-received strong').text(dataReceivedCount);
+	      drawData(receivedMapData);
 	    });
 
 		/*	geocoder = new google.maps.Geocoder();
