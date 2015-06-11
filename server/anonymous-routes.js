@@ -10,6 +10,6 @@ app.get('/api/random-quote', function(req, res) {
 
 
 app.get('/api/sentimentAnalysis/filterDataKeys', function(req, res) {
-	console.log('filterDataKeys requested: '+req.query.topic);
- 	res.status(200).send(filterKeysController.getKeywords(req.query.topic));
+	console.log('filterDataKeys requested: '+req.query.pageTitle);
+ 	res.status(200).send(filterKeysController.getKeywords(req.query.pageTitle));
 });

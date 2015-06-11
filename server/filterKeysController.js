@@ -1,8 +1,8 @@
 var config = require('./conf');
 
-var getKeywords = function(topic){
+var getKeywords = function(pageTitle){
 
-	return config.client.filterData[topic];
+	return config.client.filterData[pageTitle];
 
 }
 

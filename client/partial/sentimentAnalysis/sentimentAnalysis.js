@@ -5,7 +5,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 ])
 .config(function($stateProvider) {
   $stateProvider.state('sentimentAnalysis', {
-    url: '/sentimentAnalysis/:topic',
+    url: '/sentimentAnalysis/:pageTitle',
     controller: 'SentimentAnalysisCtrl',
     templateUrl: '/partial/sentimentAnalysis/sentimentAnalysis.html'
   });
@@ -15,8 +15,8 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	$scope.mapInit = mapInit;
 	$scope.activeFilter = 'all';
 	$scope.initFilter = initFilter;
-	var topic = $stateParams.topic;
-	var topicJson = {topic: topic};
+	var pageTitle = $stateParams.pageTitle;
+	var pageTitleJson = {pageTitle: pageTitle};
 
 	var googleMap;
 	var receivedMapData;
@@ -32,7 +32,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 		$http({
 	      url: '/api/sentimentAnalysis/filterDataKeys',
 	      method: 'GET',
-	      params: topicJson
+	      params: pageTitleJson
 	    }).then(function(response) {
 	      var returnedData = response.data;
 
@@ -77,7 +77,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	    	console.log("connected to server");
 	    });
 
-	    socket.emit('getSyncData', { getSyncData: topicJson });//page initiializing. ask for syncData
+	    socket.emit('getSyncData', { getSyncData: pageTitleJson });//page initiializing. ask for syncData
 
 	    var dataReceivedCount = 0;
 	    socket.on('syncTData', function (receivedData) {//TODO when server restarts and sends data again. reInit map and draw new points. or ignore it completely

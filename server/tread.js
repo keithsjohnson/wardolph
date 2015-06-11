@@ -128,8 +128,8 @@
         return initData();
     }
     
-    module.exports.getTData = function(topic) {
-        return mapData[topic];
+    module.exports.getTData = function(pageTitle) {
+        return mapData[pageTitle];
     }
 
 

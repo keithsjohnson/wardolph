@@ -68,8 +68,8 @@ var initMaster = function (express, socketio){
         console.log('event connection');
 
         socket.on('getSyncData', function(data){
-          console.log('event getSyncData'+data.getSyncData.topic);
-          var tData = tread.getTData(data.getSyncData.topic);
+          console.log('event getSyncData: '+data.getSyncData.pageTitle);
+          var tData = tread.getTData(data.getSyncData.pageTitle);
           socket.emit('syncTData',tData);
         });
 
