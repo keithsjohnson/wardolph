@@ -11,6 +11,9 @@ config.ip = '127.0.0.1';//local ip
 config.jwtSecret = 'testSecret';
 
 config.server = {};
+config.server.admin = {};
+config.server.admin.user = 'admin';
+config.server.admin.password = 'admin';
 
 config.server.production = false;
 config.server.my_type = 'dev';//can be 'master' or 'peer' or 'dev'. Peer will try and connect to master using config below
