@@ -1,16 +1,66 @@
-# wardolph
+#Wardolph
 Sentiment Analysis
+
 http://www.wardolph.com/
 
-#Setup
-Install node modules with command below:
-"npm install"
-no need for npm install async express sentiment socket.io twit mongodb
+#Technologies Used
 
-please change the /server/conf.js file and add your twitter configurations.
-You can get them by creating a new twitter App and allowing it access to your account.
+##Frontend
+AngularJS
+
+Angular JWT
+
+Angular Storage
+
+Angular UI Router
+
+Angulartics
+
+JQuery
+
+Bootstrap
+
+##Backend
+NodeJS
+
+MongoDB
+
+SocketIO
+
+Twit
+
+Sentiment
+
+Express
+
+Express JWT
 
 
-#start
+
+#Getting Started
+
+##Environment
+Make sure you have NodeJS and MongoDB installed. NPM will install with NodeJS.
+
+Install Git as well
+
+##Setup
+Checkout this git project
+
+After checkout browse to the newly checked out folder called wardolph
+
+Install node modules with command "npm install"
+
+
+Now Configure your project in /server/conf.js
+
+Tell this project where mongoDB is installed.
+
+Add Twitter configuration. Create a new twitter app to get your configuration. Also allow it access to your account.
+
+
+
+#Start
 run mongodb
+
 run node app file /server/server.js
