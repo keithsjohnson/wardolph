@@ -12,8 +12,8 @@ var socketio = require('socket.io');
 var express = require('express');
 
 var config = require('./conf');
-var master = require('./master');
-var peer = require('./peer');
+var master = require('./master/master');
+var peer = require('./peer/peer');
 
 
 if(config.server.my_type == 'master'){

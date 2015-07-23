@@ -18,9 +18,10 @@ var sntApi = require('sentiment');
                     };
 
     var Coordinates = function (lat,lng){
-        this.lat = lat
+        this.lat = lat;
         this.lng = lng;
     }
+    
     var MiniTData = function (lat, lng, topic){
         this.coordinates = new Coordinates(lat,lng);
         this.tweetCount = 0;
