@@ -27,11 +27,6 @@ var useQueries = false;
 
 var onTweetCallback = null;
 
-var Peer = function(name, collectionName, searchKeywords){
-    this.name = name;
-    this.collectionName = collectionName;
-    this.searchKeywords = [];
-}
 
 //if you get twitter 401 errors check if the keys below are correct, time on your server is correct, if twitter has new api then upgrate twit
 var startCollectingTweets = function (){

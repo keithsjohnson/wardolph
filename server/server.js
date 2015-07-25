@@ -13,7 +13,7 @@ var express = require('express');
 
 var config = require('./conf');
 var master = require('./master/master');
-var peer = require('./peer/peer');
+var peer = require('./peer/peerLauncher');
 
 
 if(config.server.my_type == 'master'){

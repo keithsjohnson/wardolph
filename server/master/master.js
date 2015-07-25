@@ -1,13 +1,14 @@
 var initMaster = function (express, socketio){
 
-	var path 			= require('path');
-	var http 			= require('http');
-	var bodyParser      = require('body-parser');
-	var errorhandler    = require('errorhandler');
-  var cors            = require('cors');
-  var tread 			= require('./tread');
-  var config 			= require('./../conf');
-  var peerController      = require('./peerController');
+	var path              = require('path');
+	var http              = require('http');
+	var bodyParser        = require('body-parser');
+	var errorhandler      = require('errorhandler');
+  var cors              = require('cors');
+  var tread             = require('./tread');
+  var config            = require('./../conf');
+  var peerController    = require('./peerController');
+  var clientController  = require('./clientController');
 
   var router = express();
 
@@ -42,7 +43,7 @@ var initMaster = function (express, socketio){
     var io = socketio.listen(server);
     var peerIO = socketio.listen(peerListenerServer).of('/peerConnection');
 
-    router.use(express.static(path.resolve(__dirname, '../client')));
+    router.use(express.static(path.resolve(__dirname, '../../client')));
 
     /*router.get('/admin', function(req, res) {
      //res.send('/admin.html');
@@ -50,20 +51,30 @@ var initMaster = function (express, socketio){
     });*/
 
     var messages = [];
-    var sockets = [];
+    //var sockets = [];
 
     peerIO.on('connection', function(peerSocket){
       console.log('a peer connected');
 
       peerSocket.on('peerInfo', function (data) {
         console.log("peer info: ",data);
-        peerController.setPeer(data);
+        peerController.setPeer(peerSocket.id,data);
       });
 
-      peerSocket.on('tweet', function (data) {
-        //TODO draw this dat on map
+      peerSocket.on('tweet', function (tweetData) {
+        //TODO draw this data on map
         //TODO save it in aggregation tables.
-        console.log('tweet received:' + data);
+        var peer = peerController.getPeerById(peerSocket.id);
+        if(peer){
+          console.log('peer: '+peer.collectionName+' tweet received:' + tweetData);
+          clientController.emit(peer.collectionName,'tweetData',tweetData);
+        }
+        
+      });
+
+      peerSocket.on('disconnect', function () {
+        peerController.removePeer(peerSocket.id);
+          //sockets.splice(sockets.indexOf(socket), 1);//TODO provide implementation
       });
 
     });
@@ -77,12 +88,14 @@ var initMaster = function (express, socketio){
           console.log('event getSyncData: '+data.getSyncData.pageTitle);
           var tData = tread.getTData(data.getSyncData.pageTitle);
           socket.emit('syncTData',tData);
+          clientController.setClient(socket,data);
         });
 
-        sockets.push(socket);//sockets is list of open connections with clients. Number of open connections equals number of clients.
+        //sockets.push(socket);//sockets is list of open connections with clients. Number of open connections equals number of clients.
 
         socket.on('disconnect', function () {
-          sockets.splice(sockets.indexOf(socket), 1);
+          clientController.removeClient(socket);
+          //sockets.splice(sockets.indexOf(socket), 1);
         });
 
     });

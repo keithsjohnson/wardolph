@@ -1,21 +1,8 @@
-
-var Peer = function(name, collectionName, searchKeywords){
-		this.name = name;
-		this.collectionName = collectionName;
-		if(searchKeywords instanceof Array){
-			this.searchKeywords = searchKeywords;
-		}
-		else{
-			this.searchKeywords = [];
-		}
-	}
-
-Peer.prototype.addKeyword = function(keyword){
-	this.searchKeywords.push(keyword);
-}
+var Peer = require('./../classes/Peer');
 
 var maxKeywords = 5;
 var peers = {};
+var peerSocketMap = {};
 
 peers['peer1'] = new Peer('peer1','rentalcars');
 peers['peer1'].addKeyword('rentalcars.com');
@@ -27,8 +14,26 @@ peers['peer1'].addKeyword('rentalcars.');
 peers['peer2'] = new Peer('peer2','holidayAutos');
 peers['peer2'].addKeyword('holidayautos');
 
-exports.setPeer = function(data) {
-	peers[data.name] = new Peer(data.name,data.collectionName,data.searchKeywords);
+exports.setPeer = function(socketId, data) {
+	var peer = new Peer(data.name,data.collectionName,data.searchKeywords);
+	peers[data.name] = peer;
+	peerSocketMap[socketId] = peer;
+}
+
+exports.removePeer = function(socketId) {
+	var peer = peerSocketMap[socketId];
+	if(peer){
+		delete peers[peer.name];
+		delete peerSocketMap[socketId];
+	}
+}
+
+exports.getPeerById = function(socketId) {
+	return peerSocketMap[socketId];
+}
+
+exports.getPeerByName = function(name) {
+	return peers[name];
 }
 
 exports.getPeers = function() {

@@ -3,21 +3,8 @@ var initPeer = function (){
 	var socketioClient = require('socket.io-client');
 	var tCollect = require('./tCollect');
 	var config = require('./../conf');
+	var Peer = require('./../classes/Peer');
 
-	var Peer = function(name, collectionName, searchKeywords){
-		this.name = name;
-		this.collectionName = collectionName;
-		if(searchKeywords instanceof Array){
-			this.searchKeywords = searchKeywords;
-		}
-		else{
-			this.searchKeywords = [];
-		}
-	}
-
-	Peer.prototype.addKeyword = function(keyword){
-		this.searchKeywords.push(keyword);
-	}
 
 	var me = new Peer(config.peer.name, config.peer.list_name, config.peer.keywords);
 

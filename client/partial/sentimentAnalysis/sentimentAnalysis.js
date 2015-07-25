@@ -104,7 +104,12 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 			/*dataReceivedCount++;*/
 	      //console.log("averageSentiment: "+receivedData.averageSentiment);
 	      //$('#data-received strong').text(dataReceivedCount);
-	      drawData(receivedMapData);
+	    	drawData(receivedMapData);
+
+			socket.on('tweetData', function (data) {
+	    	
+		    	console.log("data received");
+		    });
 	    });
 
 		/*	geocoder = new google.maps.Geocoder();

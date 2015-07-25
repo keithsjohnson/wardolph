@@ -2,6 +2,9 @@
 var mongo = require('mongodb');
 var config = require('../conf');
 var sntApi = require('sentiment');
+var TDataObj = require('./../classes/TDataObj');
+var Coordinates = require('./../classes/Coordinates');
+var MiniTData = require('./../classes/MiniTData');
 
     var mongoClient = mongo.MongoClient;
 
@@ -10,24 +13,7 @@ var sntApi = require('sentiment');
     
     var getCoordinateViaTimeZone = false;
     
-    var TDataObj = function (date,type,sentiment,tweet){
-                        this.date = date;
-                        this.type = type;
-                        this.sentiment = sentiment;
-                        this.tweet = tweet;
-                    };
-
-    var Coordinates = function (lat,lng){
-        this.lat = lat;
-        this.lng = lng;
-    }
     
-    var MiniTData = function (lat, lng, topic){
-        this.coordinates = new Coordinates(lat,lng);
-        this.tweetCount = 0;
-        this.averageSentiment = 0;
-        this.topic = topic;
-    }
     
     var startReadingStream = function (){
 
