@@ -1,6 +1,9 @@
 
 var Client = require('./../classes/Client');
-
+var Coordinates = require('./../classes/Coordinates');
+var ExtendedTweet = require('./../classes/ExtendedTweet');
+var timeZoneHelper = require('./timeZoneHelper');
+var sntApi = require('sentiment');
 
 var clients = {};
 var clientSocketMap = {};
@@ -32,7 +35,7 @@ exports.getClientsByName = function(name) {
 	return clients[name];
 }
 
-exports.emit = function(clientName, eventName, tData) {
+var emit = function(clientName, eventName, tData) {
 	var clientsByName = clients[clientName];
 	if(clientsByName){
 		for(var i=0; i<clientsByName.length; i++){
@@ -41,5 +44,42 @@ exports.emit = function(clientName, eventName, tData) {
 	}
 }
 
+var sendTweetData = function(clientName, extTweetJson){
+	var extTweet = new ExtendedTweet(extTweetJson.title, extTweetJson.queryParam, extTweetJson.date, extTweetJson.type, extTweetJson.tweet);
+	var eventName = 'extTweet';
+	var tweet = extTweet.tweet;
+	if(tweet!=null && typeof(tweet)!='undefined'){
+		var sentiment = sntApi(tweet.text);
+		if(sentiment.words.length>0){
+			if( tweet.coordinates!=null && typeof(tweet.coordinates) != 'undefined'){
+				var lat = tweet.coordinates.coordinates[1];
+				var lng = tweet.coordinates.coordinates[0];
+				var coordinates = new Coordinates(lat, lng);
+				extTweet.setCoordinates(coordinates);
+			}
+			else if(typeof(tweet.user.time_zone) != 'undefined' && tweet.user.time_zone!=null){
+				var timeZoneName = extTweet.tweet.user.time_zone;
+				var timezoneFound = timeZoneHelper.findTimeZoneByName(timeZoneName);
+				if(timezoneFound){
+					extTweet.setCoordinates(timezoneFound.coordinates);
+				}
+			}
+
+			extTweet.setSentiment(sentiment);
+
+			if(extTweet.coordinates){
+				emit(clientName,eventName,extTweet);
+			}
+			
+			
+
+		}
+		
+	}
+	
+}
+
 exports.setClient = setClient;
 exports.removeClient = removeClient;
+exports.emit = emit;
+exports.sendTweetData = sendTweetData;

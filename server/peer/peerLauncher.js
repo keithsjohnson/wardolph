@@ -10,8 +10,9 @@ var initPeer = function (){
 
 	var socket = socketioClient.connect('http://'+config.server.master_name+':'+config.server.peer_listen_port+'/peerConnection');
 
-	var sendDataToMaster = function(tweet){
-		socket.emit('tweet', tweet);
+	var sendDataToMaster = function(extTweet){
+		//JSON.stringify(extTweet,null,'\t');
+		socket.emit('extTweet', extTweet);
 	}
 
 	tCollect.setOnTweetCallback(sendDataToMaster);

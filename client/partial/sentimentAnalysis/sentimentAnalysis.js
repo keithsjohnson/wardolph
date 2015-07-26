@@ -106,7 +106,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	      //$('#data-received strong').text(dataReceivedCount);
 	    	drawData(receivedMapData);
 
-			socket.on('tweetData', function (data) {
+			socket.on('extTweet', function (data) {
 	    	
 		    	console.log("data received");
 		    });

@@ -3,6 +3,7 @@ console.log('tcollect init. It collects twitter data on different topics.');
 var twit = require('twit');
 var config = require('./../conf');
 var mongo = require('mongodb');
+var ExtendedTweet = require('./../classes/ExtendedTweet');
 
 var mongoClient = mongo.MongoClient;
 
@@ -38,19 +39,6 @@ var startCollectingTweets = function (){
       , access_token_secret:  config.twitter.access_token_secret
     });
     
-    var ExtendedTweet = function (title, queryParam, date, type, tweet){
-        this.title = title;
-        this.queryParam = queryParam;
-        this.date = date;
-        this.type = type;
-        this.tweet = tweet;
-    }
-
-    var TDataObj = function (date,type,tweet){
-                        this.date = date;
-                        this.type = type;
-                        this.tweet = tweet;
-                    };
     
     stream = tSearch.stream('statuses/filter', { track: collectKeywords });
     
@@ -70,11 +58,12 @@ var startCollectingTweets = function (){
             var now = new Date();
 
             var extTweet = new ExtendedTweet(collectionName, collectKeywords, now, 'streamed_tweet', newTweet);
-            collection.insert(extTweet, {w:0}, function(err, result) {});
+            //collection.insert(extTweet, {w:0}, function(err, result) {});
             //var jsonDate = now.toJSON();
             //var tClientData = new TDataObj(jsonDate,'streamed_tweet',newTweet);
+            //console.log(JSON.stringify(extTweet,null,'\t'));
             if(onTweetCallback !=null){
-                onTweetCallback(newTweet);
+                onTweetCallback(extTweet);
             }
                                 
         });
@@ -114,7 +103,7 @@ var startCollectingTweets = function (){
     //var collectedTData = [];
     
     
-    var collectThroughQueries = function (){//needs updating
+    /*var collectThroughQueries = function (){//needs updating
         tSearch.get('search/tweets', 
                 { q: collectStream, count: 100 }, //count 100 is max twitter allows
                 function(err, tweetData, response) {
@@ -133,7 +122,7 @@ var startCollectingTweets = function (){
                     }
                 }   
         );
-    }
+    }*/
     
     //if(useQueries){
    //     queryInterval = setInterval(collectThroughQueries, 5000);//calling every 5 seconds as rate limit is 180 queries every 15 minutes

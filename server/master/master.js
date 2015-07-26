@@ -61,13 +61,13 @@ var initMaster = function (express, socketio){
         peerController.setPeer(peerSocket.id,data);
       });
 
-      peerSocket.on('tweet', function (tweetData) {
+      peerSocket.on('extTweet', function (extTweet) {
         //TODO draw this data on map
         //TODO save it in aggregation tables.
         var peer = peerController.getPeerById(peerSocket.id);
         if(peer){
-          console.log('peer: '+peer.collectionName+' tweet received:' + tweetData);
-          clientController.emit(peer.collectionName,'tweetData',tweetData);
+          //console.log('peer: '+peer.collectionName+' tweet received:' + extTweet);
+          clientController.sendTweetData(peer.collectionName, extTweet);
         }
         
       });
