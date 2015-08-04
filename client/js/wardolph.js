@@ -3,7 +3,6 @@
 angular.module( 'wardolphMain', [
   'wardolphMain.home',
   'wardolphMain.login',
-  'wardolphMain.sntMap',
   'wardolphMain.sentimentAnalysis',
   'wardolphMain.admin',
   'wardolphMain.blog',
