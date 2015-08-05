@@ -5,13 +5,14 @@ var sntApi = require('sentiment');
 var TDataObj = require('./../classes/TDataObj');
 var Coordinates = require('./../classes/Coordinates');
 var MiniTData = require('./../classes/MiniTData');
+var timeZoneHelper = require('./timeZoneHelper');
 
     var mongoClient = mongo.MongoClient;
 
     
     var tweetsWithCoordinates = {};
     
-    var getCoordinateViaTimeZone = false;
+    //var getCoordinateViaTimeZone = false;
     
     
     
@@ -24,10 +25,10 @@ var MiniTData = require('./../classes/MiniTData');
           if(!err) {
             console.log("tread: We are connected to mongo db");
             var collection = db.collection(config.peer.list_name);//try feminismCoordinate for smaller set
-            var timezoneCol = db.collection('timezone');
+            //var timezoneCol = db.collection('timezone');
             var readyToDraw = db.collection(config.peer.list_name+'_readyToDraw');
             readyToDraw.drop();
-            var timezone = null;
+            //var timezone = null;
             var keywordDataMap = {};
             var dataCoordinateMappedSentiment = {};
 
@@ -71,7 +72,7 @@ var MiniTData = require('./../classes/MiniTData');
             printCompletionPercentageIntervalId = setInterval(printCompletionPercentage, 30000);//print percentage every 30 sec
             //end debugging section;
 
-            var getTimeZone = function(tweet){
+            /*var getTimeZone = function(tweet){
                 var timezoneFound = null;
                 for(var i=0; i<timezone.length; i++){
                     if(typeof(tweet.user.time_zone) != 'undefined' && tweet.user.time_zone!=null && tweet.user.time_zone == timezone[i].name){
@@ -80,7 +81,7 @@ var MiniTData = require('./../classes/MiniTData');
                     }
                 }
                 return timezoneFound;
-            }
+            }*/
 
             var storeInLatLongMap = function(lat, lng, sentiment, topic){
                 
@@ -157,10 +158,11 @@ var MiniTData = require('./../classes/MiniTData');
                                     //console.log('jzTest1 sentiment: '+sentiment.score+' tweet:  '+tweet.text);
                                 }
                                 else{
-                                    var timezoneFound = getTimeZone(tweet);
-                                    if(timezoneFound!=null){
-                                        var lat = timezoneFound.lat;
-                                        var lng = timezoneFound.lng;
+                                    var timezoneFound = timeZoneHelper.findTimeZoneByName(tweet.user.time_zone);
+                                    //var timezoneFound = getTimeZone(tweet);
+                                    if(timezoneFound){
+                                        var lat = timezoneFound.coordinates.lat;
+                                        var lng = timezoneFound.coordinates.lng;
                                         
                                         storeInLatLongMap(lat,lng,sentiment,topic);
                                         //console.log('jzTest1 sentiment: '+sentiment.score+' tweet:  '+tweet.text);
@@ -184,12 +186,12 @@ var MiniTData = require('./../classes/MiniTData');
                 });
             }
             
-            timezoneCol.find().toArray(function(err, items) {
+            /*timezoneCol.find().toArray(function(err, items) {
                 //console.log(items);
                 timezone = items;
                 initStream();
-            });
-
+            });*/
+            initStream();
             
 
             

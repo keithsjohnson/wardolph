@@ -5,17 +5,17 @@ var timezoneCollection = {};
 var init = function(){
 
 	var rawData = [
-	  ["Eastern Time (US & Canada)",37.09024,-95.71289100000001,"United States"],
-	  ["Central Time (US & Canada)",37.09024,-95.71289100000001,"United States"],
+	  ["Eastern Time (US & Canada)",40.7127837,-74.00594130000002,"New York, NY, USA"],
+	  ["Central Time (US & Canada)",41.8781136,-87.62979819999998,"Chicago, IL, USA"],
 	  ["London",51.5073509,-0.12775829999998223,"London, UK"],
-	  ["Pacific Time (US & Canada)",37.09024,-95.71289100000001,"United States"],
+	  ["Pacific Time (US & Canada)",34.0522342,-118.2436849,"Los Angeles, CA, USA"],
 	  ["Atlantic Time (Canada)",56.130366,-106.34677099999999,"Canada"],
 	  ["Arizona",34.0489281,-111.09373110000001,"Arizona, USA"],
 	  ["Quito",-0.1806532,-78.46783820000002,"Quito, Ecuador"],
 	  ["Amsterdam",52.3702157,4.895167899999933,"Amsterdam, Netherlands"],
 	  ["Casablanca",33.5731104,-7.589843400000063,"Casablanca, Morocco"],
 	  ["New Delhi",28.6139391,77.20902120000005,"New Delhi, Delhi, India"],
-	  ["Mountain Time (US & Canada)",37.09024,-95.71289100000001,"United States"],
+	  ["Mountain Time (US & Canada)",39.7392358,-104.990251,"Denver, CO, USA"],
 	  ["Athens",37.983917,23.729359899999963,"Athens, Greece"],
 	  ["Hawaii",19.8967662,-155.58278180000002,"Hawaii, USA"],
 	  ["Sydney",-33.8674869,151.20699020000006,"Sydney NSW, Australia"],
@@ -220,6 +220,9 @@ var init = function(){
 }
 
 var findTimeZoneByName = function(name){
+	if(typeof(name)=='undefined' || name==null){
+		return;
+	}
 	//console.log('finding: '+name+ ' found: '+timezoneCollection[name]);
 	return timezoneCollection[name];
 }

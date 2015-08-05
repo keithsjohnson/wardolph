@@ -2,7 +2,7 @@
 var Client = require('./../classes/Client');
 var Coordinates = require('./../classes/Coordinates');
 var ExtendedTweet = require('./../classes/ExtendedTweet');
-var timeZoneHelper = require('./timeZoneHelper');
+var timeZoneHelper = require('./../utils/timeZoneHelper');
 var sntApi = require('sentiment');
 
 var clients = {};
