@@ -58,7 +58,7 @@ var startCollectingTweets = function (){
             var now = new Date();
 
             var extTweet = new ExtendedTweet(collectionName, collectKeywords, now, 'streamed_tweet', newTweet);
-            //collection.insert(extTweet, {w:0}, function(err, result) {});
+            collection.insert(extTweet, {w:0}, function(err, result) {});
             //var jsonDate = now.toJSON();
             //var tClientData = new TDataObj(jsonDate,'streamed_tweet',newTweet);
             //console.log(JSON.stringify(extTweet,null,'\t'));
