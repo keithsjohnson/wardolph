@@ -87,14 +87,16 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	    	receivedMapData = receivedData;
 			
 	    	smap.drawData(receivedMapData['all']);
-
-			socket.on('extTweet', function (data) {
-	    	
-		    	console.log("data received");
-		    	smap.drawRealTimeData(data);
-		    });
+			
 	    });
 
+	    socket.on('extTweet', function (data) {
+	    	var activeFilter = $scope.activeFilter;
+			//console.log("data received: "+data.topic);
+			if(activeFilter=='all' || activeFilter == data.topic){
+				smap.drawRealTimeData(data);
+			}
+		});
 
 
 

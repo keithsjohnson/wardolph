@@ -66,7 +66,7 @@ var initMaster = function (express, socketio){
         //TODO save it in aggregation tables.
         var peer = peerController.getPeerById(peerSocket.id);
         if(peer){
-          //console.log('peer: '+peer.collectionName+' tweet received:' + extTweet);
+          console.log('peer: '+peer.collectionName+' tweet received:' + extTweet);
           clientController.sendTweetData(peer.collectionName, extTweet);
         }
         

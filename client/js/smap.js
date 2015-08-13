@@ -74,8 +74,15 @@ SMap.prototype.drawDataPoint = function(tMiniData){
 
 SMap.prototype.clearDrawnData = function(){
 	for (var i = 0; i < this.drawnDataPoints.length; i++) {
-			this.drawnDataPoints[i].setMap(null);
+		var dataPoint = this.drawnDataPoints[i];
+		if(dataPoint.clearMap){
+			dataPoint.clearMap();
+		}
+		else{
+			dataPoint.setMap(null);
+		}
 	}
+	this.drawnDataPoints = [];
 }
 
 SMap.prototype.interpolateHsl = function(averageSentiment) {
@@ -102,6 +109,7 @@ SMap.prototype.drawRealTimeData = function(data){
 	var sntVal = data.sentiment.score;
 	var color = this.interpolateHsl(sntVal);
 	var dataPoint = new SMap.DataPoint(data.coordinates.lat, data.coordinates.lng, data.title, color, 0, this.map);
+	this.drawnDataPoints.push(dataPoint);
 }
 
 SMap.DataPoint = function(lat, lng, title, color, zIndex, map) {
@@ -113,10 +121,13 @@ SMap.DataPoint = function(lat, lng, title, color, zIndex, map) {
 	this.zIndex_ = zIndex;
 	this.div_ = null;
 	this.setMap(map);
-	console.log('jzTest drawing data: ',lat,lng,color);
 }
 
 SMap.DataPoint.prototype = new google.maps.OverlayView();
+
+SMap.DataPoint.prototype.clearMap = function(){
+	this.setMap(null);
+}
 
 SMap.DataPoint.prototype.onAdd = function() {
 	var this_ = this;
@@ -146,7 +157,7 @@ SMap.DataPoint.prototype.onAdd = function() {
 
 SMap.DataPoint.prototype.getPosition = function (){
 	return this.bounds_;
-}
+};
 
 SMap.DataPoint.prototype.draw = function() {
 
@@ -160,4 +171,9 @@ SMap.DataPoint.prototype.draw = function() {
 	var div = this.div_;
 	div.style.left = pixelPosition.x + 'px';
 	div.style.top = pixelPosition.y + 'px';
+};
+
+SMap.DataPoint.prototype.onRemove = function() {
+  this.div_.parentNode.removeChild(this.div_);
+  this.div_ = null;
 };

@@ -14,4 +14,8 @@ ExtendedTweet.prototype.setCoordinates = function(coordinates){
 	this.coordinates = coordinates;
 }
 
+ExtendedTweet.prototype.setTopic = function(coordinates){
+	this.topic = topic;
+}
+
 module.exports = ExtendedTweet;
