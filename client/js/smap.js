@@ -110,6 +110,37 @@ SMap.prototype.drawRealTimeData = function(data){
 	var color = this.interpolateHsl(sntVal);
 	var dataPoint = new SMap.DataPoint(data.coordinates.lat, data.coordinates.lng, data.title, color, 0, this.map);
 	this.drawnDataPoints.push(dataPoint);
+	this.drawInfoBubble(data);
+}
+
+SMap.prototype.drawInfoBubble = function(data){
+	var sntVal = data.sentiment.score;
+	var map = this.map;
+
+	var infoBubble = new InfoBubble({
+          map: map,
+          content: data.tweet.text,
+          position: new google.maps.LatLng(data.coordinates.lat, data.coordinates.lng),
+		  maxWidth: 300,
+          shadowStyle: 1,
+          padding: 10,
+          backgroundColor: 'rgb(57,57,57)',
+          borderRadius: 4,
+          arrowSize: 10,
+          borderWidth: 1,
+          borderColor: '#2c2c2c',
+          disableAutoPan: true,
+          hideCloseButton: true,
+          backgroundClassName: 'info-bubble-div',
+          arrowPosition: 30,
+          arrowStyle: 2
+        });
+
+	infoBubble.open();
+
+	var closeInfoWindow = function(){infoBubble.close();};
+	setTimeout(closeInfoWindow,5000);
+	//this.drawnDataPoints.push(dataPoint);
 }
 
 SMap.DataPoint = function(lat, lng, title, color, zIndex, map) {
