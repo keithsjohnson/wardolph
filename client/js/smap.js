@@ -139,8 +139,7 @@ SMap.prototype.drawInfoBubble = function(data){
 	infoBubble.open();
 
 	var closeInfoWindow = function(){infoBubble.close();};
-	setTimeout(closeInfoWindow,5000);
-	//this.drawnDataPoints.push(dataPoint);
+	setTimeout(closeInfoWindow,7000);
 }
 
 SMap.DataPoint = function(lat, lng, title, color, zIndex, map) {
