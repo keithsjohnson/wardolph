@@ -37,7 +37,7 @@ TimeSeries.prototype.addRawData = function(dataId,extTweet){
 	//var coordinates = extTweet.coordinates.toString();
 	var coordinateStrKey = extTweet.coordinates.toString();
 	coordinateStrKey = coordinateStrKey.replace(/\./g,'_');//replace all occurences of dot
-	console.log('jzTest4: '+extTweet.coordinates.toString());
+	//console.log('jzTest4: '+extTweet.coordinates.toString());
 	if(typeof(this.dataMap[dayDate])=='undefined' ){
 		this.dataMap[dayDate] = {};
 	}
