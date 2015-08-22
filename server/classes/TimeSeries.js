@@ -6,15 +6,20 @@ var TimeSeries = function(){
 
 }
 
-/*TimeSeries.prototype.addData = function(dataTime){//TODO this is not being used
+TimeSeries.prototype.addData = function(data){//used for reading mongo db data
 
-	var year = dataTime.year;
-	var month = dataTime.month;
-	var day = dataTime.day;
+	var year = data.year;
+	var month = data.month;
+	var day = data.day;
+	var topic = data.topic;
 
 	var dayDate = new Date(year,month,day);
-	this.dataMap[dayDate] = new TimeSeries.DataTime(topic,sentiment,dataId,year,month,day,hour);
-}*/
+	if(typeof(this.dataMap[dayDate])=='undefined' ){
+		this.dataMap[dayDate] = {};
+	}
+	this.dataMap[dayDate][topic] = data;
+	
+}
 
 TimeSeries.prototype.addRawData = function(dataId,extTweet){
 
@@ -29,10 +34,10 @@ TimeSeries.prototype.addRawData = function(dataId,extTweet){
 	var dayDate = new Date(year,month,day);
 	var sentiment = extTweet.sentiment.score;
 	var topic = extTweet.topic;
-	var coordinates = extTweet.coordinates.toString();
-	var coordinateStrKey = coordinates.lat+','+coordinates.lng;
-	coordinateStrKey = coordinateStrKey.replace('.','-')
-
+	//var coordinates = extTweet.coordinates.toString();
+	var coordinateStrKey = extTweet.coordinates.toString();
+	coordinateStrKey = coordinateStrKey.replace(/\./g,'_');//replace all occurences of dot
+	console.log('jzTest4: '+extTweet.coordinates.toString());
 	if(typeof(this.dataMap[dayDate])=='undefined' ){
 		this.dataMap[dayDate] = {};
 	}

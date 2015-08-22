@@ -9,6 +9,7 @@ var initMaster = function (express, socketio){
   var config            = require('./../conf');
   var peerController    = require('./peerController');
   var clientController  = require('./clientController');
+  var readTimeSeries    = require('./../utils/readTimeSeries');
 
   var router = express();
 
@@ -84,8 +85,15 @@ var initMaster = function (express, socketio){
         console.log('event connection');
 
         socket.on('getSyncData', function(data){
-          console.log('event getSyncData: '+data.getSyncData.pageTitle);
-          var tData = tread.getTData(data.getSyncData.pageTitle);
+          //console.log('event getSyncData: '+data.getSyncData.pageTitle);
+          var tData = undefined;
+          if(data.getSyncData.timeSeries){
+            tData = readTimeSeries.getData(data.getSyncData.timeSeries);
+          }
+          else{
+            tData = tread.getTData(data.getSyncData.pageTitle);
+          }
+
           socket.emit('syncTData',tData);
           clientController.setClient(socket,data);
         });

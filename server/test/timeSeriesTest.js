@@ -39,11 +39,13 @@ mongoClient.connect("mongodb://"+config.ip+":27017/wardolph", function(err, db) 
 				var topic = tweetUtils.findTopic(tweet,filterData);
 				var sentiment = tweetUtils.findSentiment(tweet);
 				var coordinates = tweetUtils.findCoordinates(tweet);
+
 				extTweet.setSentiment(sentiment);
 				extTweet.setCoordinates(coordinates);
 				extTweet.setTopic(topic);
 
 				if(typeof(extTweet.sentiment)!='undefined' && typeof(extTweet.coordinates)!='undefined'){
+					//console.log(coordinates.toString());
 					timeSeries.addRawData(id,extTweet);
 				}
 				

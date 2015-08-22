@@ -8,7 +8,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 ])
 .config(function($stateProvider) {
   $stateProvider.state('sentimentAnalysis', {
-    url: '/sentimentAnalysis/:pageTitle',
+    url: '/sentimentAnalysis/:pageTitle?timeSeriesEnabled',
     controller: 'SentimentAnalysisCtrl',
     templateUrl: '/partial/sentimentAnalysis/sentimentAnalysis.html'
   });
@@ -19,15 +19,26 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	$scope.activeFilter = 'all';
 	$scope.initFilter = initFilter;
 	var pageTitle = $stateParams.pageTitle;
+	var timeSeriesEnabled = $stateParams.timeSeriesEnabled;
 	$scope.pageTitle = pageTitle;
 	var pageTitleJson = {pageTitle: pageTitle};
+	console.log('timeseries: '+timeSeriesEnabled);
+	var timeSliderVal = 5;
+	if(timeSeriesEnabled){
+		pageTitleJson.timeSeries = timeSliderVal;
+		console.log('timeseries enabled');
+	}
+	
+	var socket = null;
 
 	var googleMap;
 	var receivedMapData;
 	var drawnDataPoints = [];
 	//$scope.pageInit = pageInit;
 	
+	initSocket();
 	pageInit();
+	
 
 	//var smap = null;
 
@@ -46,7 +57,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	      }
 	      //console.log('returnedData: ',returnedData)
 	        $scope.filterData = returnedData;
-	        smap = new SMap(initSocket);
+	        smap = new SMap(getData);
 	        smap.drawMap();
 	        //mapInit();
 	      
@@ -56,7 +67,15 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	      console.log('error getting filterKeys'+error.data);
 	    });
 
-		$('.time-slider').slider();
+	    if(timeSeriesEnabled){
+	    	$('.time-slider').slider({value:timeSliderVal});
+			$('.time-slider').on('slide', function(slideEvt) {
+				timeSliderVal = slideEvt.value;
+				pageTitleJson.timeSeries = timeSliderVal;
+				getData();
+			});
+	    }
+		
 
 	}
 	
@@ -73,21 +92,22 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 
 	function initSocket() {
 	    
-	    var socket = io.connect();
+	    socket = io.connect();
 
 	    socket.on('connect', function () {
 	    	
 	    	//console.log("connected to server");
 	    });
 
-	    socket.emit('getSyncData', { getSyncData: pageTitleJson });//page initiializing. ask for syncData
+	    
 
 	    var dataReceivedCount = 0;
 	    socket.on('syncTData', function (receivedData) {//TODO when server restarts and sends data again. reInit map and draw new points. or ignore it completely
 	    	receivedMapData = receivedData;
-			
-	    	smap.drawData(receivedMapData['all']);
-			
+			var activeFilter = $scope.activeFilter;
+			smap.clearDrawnData();
+	    	smap.drawData(receivedMapData[activeFilter]);
+			console.log('time series data received : ',receivedData[activeFilter]);
 	    });
 
 	    socket.on('extTweet', function (data) {
@@ -98,11 +118,11 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 			}
 		});
 
-
-
 	}
 
-	
+	function getData(){
+		socket.emit('getSyncData', { getSyncData: pageTitleJson});//page initiializing. ask for syncData
+	}
 
 
 
