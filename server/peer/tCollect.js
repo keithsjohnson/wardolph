@@ -4,11 +4,17 @@ var twit = require('twit');
 var config = require('./../conf');
 var mongo = require('mongodb');
 var ExtendedTweet = require('./../classes/ExtendedTweet');
+var TimeSeries = require('./../classes/TimeSeries');
+var tweetUtils = require('./../utils/tweetUtils');
+ObjectID = mongo.ObjectID;
+
+var timeSeries = new TimeSeries();
 
 var mongoClient = mongo.MongoClient;
 
 var collectionName = config.peer.list_name;
 var collectKeywords = config.peer.keywords;
+var filterData = config.client.filterData[collectionName];
 var collectStream = collectKeywords[0];
 for(var i=1; i<collectKeywords.length; i++){
     collectStream += ' OR '+collectKeywords[i];
@@ -58,13 +64,32 @@ var startCollectingTweets = function (){
             var now = new Date();
 
             var extTweet = new ExtendedTweet(collectionName, collectKeywords, now, 'streamed_tweet', newTweet);
-            collection.insert(extTweet, {w:0}, function(err, result) {});
+            
+            extTweet._id = new ObjectID();
+            collection.insert(extTweet, {w:0}, 
+                        function(err, result) {}
+            );
+            var topic = tweetUtils.findTopic(newTweet,filterData);
+            var sentiment = tweetUtils.findSentiment(newTweet);
+            var coordinates = tweetUtils.findCoordinates(newTweet);
+            extTweet.setSentiment(sentiment);
+            extTweet.setCoordinates(coordinates);
+            extTweet.setTopic(topic);
+
+            if(typeof(extTweet.sentiment)!='undefined' && typeof(extTweet.coordinates)!='undefined'){
+                //timeSeries.addRawData(extTweet._id,extTweet);
+            }
+
+            
+
             //var jsonDate = now.toJSON();
             //var tClientData = new TDataObj(jsonDate,'streamed_tweet',newTweet);
             //console.log(JSON.stringify(extTweet,null,'\t'));
             if(onTweetCallback !=null){
                 onTweetCallback(extTweet);
             }
+
+            
                                 
         });
 

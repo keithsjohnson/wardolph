@@ -1,0 +1,10 @@
+.time-slider-container {
+    padding-top: 19.5px;
+    padding-bottom: 19.5px;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+.time-slider-container .title{
+	color:white;
+}

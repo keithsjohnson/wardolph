@@ -1,5 +1,6 @@
 <div  class="fill">
-
+<link rel="stylesheet" href="/css/bootstrap-slider.css">
+<link rel="stylesheet" href="/partial/sentimentAnalysis/sentimentAnalysis.css">
 	<div class="container page-header">
         <img class="header-icon" src="/img/icon.png" >
         <h1>Wardolph</h1>
@@ -17,7 +18,12 @@
                   </li>
                   
                 </ul>
-               
+                <ul class="nav navbar-nav navbar-right" style="display:none;">
+                  <li class="time-slider-container">
+                    <span class="title">Time Series</span>
+                    <input class="time-slider" type="text" data-slider-min="0" data-slider-max="12" data-slider-step="1" data-slider-value="8" data-slider-tooltip="hide"/>
+                  </li>
+                </ul>
             </div>
           </nav>
     </div>

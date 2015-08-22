@@ -56,7 +56,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	      console.log('error getting filterKeys'+error.data);
 	    });
 
-		
+		$('.time-slider').slider();
 
 	}
 	

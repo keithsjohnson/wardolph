@@ -14,7 +14,7 @@ ExtendedTweet.prototype.setCoordinates = function(coordinates){
 	this.coordinates = coordinates;
 }
 
-ExtendedTweet.prototype.setTopic = function(coordinates){
+ExtendedTweet.prototype.setTopic = function(topic){
 	this.topic = topic;
 }
 
