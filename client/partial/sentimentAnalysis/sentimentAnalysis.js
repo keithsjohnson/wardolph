@@ -22,11 +22,11 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	var timeSeriesEnabled = $stateParams.timeSeriesEnabled;
 	$scope.pageTitle = pageTitle;
 	var pageTitleJson = {pageTitle: pageTitle};
-	console.log('timeseries: '+timeSeriesEnabled);
-	var timeSliderVal = 5;
+	//console.log('timeseries: '+timeSeriesEnabled);
+	var timeSliderVal = 7;
 	if(timeSeriesEnabled){
 		pageTitleJson.timeSeries = timeSliderVal;
-		console.log('timeseries enabled');
+		//console.log('timeseries enabled');
 	}
 	
 	var socket = null;
@@ -67,12 +67,17 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	      console.log('error getting filterKeys'+error.data);
 	    });
 
+	    var getDataTimeOut = 0;
 	    if(timeSeriesEnabled){
 	    	$('.time-slider').slider({value:timeSliderVal});
-			$('.time-slider').on('slide', function(slideEvt) {
-				timeSliderVal = slideEvt.value;
+			$('.time-slider').on('change', function(slideEvt) {
+				timeSliderVal = slideEvt.value.newValue;
 				pageTitleJson.timeSeries = timeSliderVal;
-				getData();
+				if(getDataTimeOut){
+					clearTimeout(getDataTimeOut);
+				}
+				getDataTimeOut = setTimeout(getData, 1000);
+				//getData();
 			});
 	    }
 		
@@ -107,7 +112,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 			var activeFilter = $scope.activeFilter;
 			smap.clearDrawnData();
 	    	smap.drawData(receivedMapData[activeFilter]);
-			console.log('time series data received : ',receivedData[activeFilter]);
+			//console.log('time series data received : ',receivedData[activeFilter]);
 	    });
 
 	    socket.on('extTweet', function (data) {

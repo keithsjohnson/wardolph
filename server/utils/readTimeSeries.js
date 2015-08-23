@@ -66,7 +66,7 @@ var getData = function(month) {
 		}
 	}
 
-	var maxTweetCount = 2000;
+	var maxTweetCount = 40000;
 	for(topic in returnData){
 		var topicData = returnData[topic];
 		//console.log('jzTest topic: '+topic);
