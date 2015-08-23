@@ -19,7 +19,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 	$scope.activeFilter = 'all';
 	$scope.initFilter = initFilter;
 	var pageTitle = $stateParams.pageTitle;
-	var timeSeriesEnabled = $stateParams.timeSeriesEnabled;
+	var timeSeriesEnabled = ($stateParams.timeSeriesEnabled == 'true');
 	$scope.pageTitle = pageTitle;
 	var pageTitleJson = {pageTitle: pageTitle};
 	//console.log('timeseries: '+timeSeriesEnabled);
@@ -118,8 +118,9 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 
 	    socket.on('extTweet', function (data) {
 	    	var activeFilter = $scope.activeFilter;
-			//console.log("data received: "+data.topic);
-			if(activeFilter=='all' || activeFilter == data.topic){
+			//console.log("data received: ",data.topic,timeSeriesEnabled);
+			if(!timeSeriesEnabled && (activeFilter=='all' || activeFilter == data.topic)){
+				//console.log('drawing data');
 				smap.drawRealTimeData(data);
 			}
 		});
