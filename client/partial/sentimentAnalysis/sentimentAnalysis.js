@@ -69,6 +69,7 @@ angular.module( 'wardolphMain.sentimentAnalysis', [
 
 	    var getDataTimeOut = 0;
 	    if(timeSeriesEnabled){
+	    	$('.time-slider-container').show();
 	    	$('.time-slider').slider({value:timeSliderVal});
 			$('.time-slider').on('change', function(slideEvt) {
 				timeSliderVal = slideEvt.value.newValue;
